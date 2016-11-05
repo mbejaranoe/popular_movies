@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.app;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -47,6 +48,13 @@ public class MovieFragment extends Fragment {
 
         return rootView;
     }
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        FetchMovieTask movieTask = new FetchMovieTask();
+        movieTask.execute();
+    }
+
 
     public class FetchMovieTask extends AsyncTask<Void, Void, Void> {
 
@@ -65,7 +73,18 @@ public class MovieFragment extends Fragment {
 
             try {
                 // Construct the URL for the TMDB query
-                URL url = new URL("https://api.themoviedb.org/3/movie/popular?api_key=ef5410465bc73f2bfde9bc1142cd42ae");
+                final String SCHEME_URL = "https";
+                final String PATH_URL = "//api.themoviedb.org/3/movie/";
+                String sortOrder = "popular";
+                final String apiKey = "api_key";
+
+                Uri.Builder uriBuilder;
+                uriBuilder = new Uri.Builder();
+                uriBuilder.scheme(SCHEME_URL);
+                uriBuilder.path(PATH_URL+sortOrder);
+                uriBuilder.appendQueryParameter(apiKey, BuildConfig.TMDB_API_KEY);
+
+                URL url = new URL(uriBuilder.toString());
 
                 // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -95,6 +114,7 @@ public class MovieFragment extends Fragment {
                 }
 
                 movieInfoJsonStr = buffer.toString();
+                Log.v("MovieFragment", movieInfoJsonStr);
             } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);
                 // If the code didn't successfully get movies info, there's no point in attemping
