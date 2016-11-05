@@ -13,6 +13,10 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,12 +60,28 @@ public class MovieFragment extends Fragment {
     }
 
 
-    public class FetchMovieTask extends AsyncTask<Void, Void, Void> {
+    public class FetchMovieTask extends AsyncTask<Void, Void, String[]> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
+        private String[] getMoviePosterFromJson(String movieInfoJsonStr) throws JSONException {
+            final String TMDB_RESULTS = "results";
+            final String TMDB_POSTER = "poster_path";
+            JSONObject movieJson = new JSONObject(movieInfoJsonStr);
+            JSONArray resultsArray = movieJson.getJSONArray(TMDB_RESULTS);
+
+            String[] resultStrs = new String[resultsArray.length()];
+            for (int i = 0; i < resultsArray.length(); i++) {
+                resultStrs[i] = resultsArray.getJSONObject(i).getString(TMDB_POSTER);
+            }
+            for (String s : resultStrs){
+                Log.v(LOG_TAG, "Movie poster path" + s);
+            }
+            return resultStrs;
+        }
+
         @Override
-        protected Void doInBackground(Void... params) {
+        protected String[] doInBackground(Void... params) {
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -69,7 +89,7 @@ public class MovieFragment extends Fragment {
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String movieInfoJsonStr = null;
+            String movieInfoJsonStr;
 
             try {
                 // Construct the URL for the TMDB query
@@ -132,6 +152,13 @@ public class MovieFragment extends Fragment {
                     }
                 }
             }
+
+            try {
+                return getMoviePosterFromJson(movieInfoJsonStr);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
             return null;
         }
     }
@@ -158,6 +185,7 @@ public class MovieFragment extends Fragment {
                 imageView = (ImageView) convertView;
             }
 
+            //Picasso.with(context).load("[url]").into(imageView);
             imageView.setImageResource(R.drawable.image);
 
             return imageView;
