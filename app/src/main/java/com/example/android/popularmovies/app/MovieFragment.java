@@ -13,6 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,28 +25,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MovieFragment extends Fragment {
 
-    private ImageAdapter mMoviesAdapter;
+    private ImageListAdapter mMoviesAdapter;
 
     public MovieFragment(){
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        String[] url = {};
 
-        ImageView img = new ImageView(getContext());
-        img.setImageResource(R.drawable.image);
-
-        ImageView[] imageArray = {img, img, img, img, img, img, img, img, img};
-
-        ArrayList<ImageView> gridMovies = new ArrayList<ImageView>(Arrays.asList(imageArray));
-
-        mMoviesAdapter = new ImageAdapter(getActivity(), R.id.grid_item_movie_imageview, gridMovies);
-
+        mMoviesAdapter = new ImageListAdapter(getContext(), url);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
@@ -59,25 +52,27 @@ public class MovieFragment extends Fragment {
         movieTask.execute();
     }
 
-
     public class FetchMovieTask extends AsyncTask<Void, Void, String[]> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
-        private String[] getMoviePosterFromJson(String movieInfoJsonStr) throws JSONException {
+        private String[] getMoviePosterPathFromJson(String movieInfoJsonStr) throws JSONException {
+            String LOG_TAG = "getMoviePosterPathFromJson";
+
             final String TMDB_RESULTS = "results";
             final String TMDB_POSTER = "poster_path";
             JSONObject movieJson = new JSONObject(movieInfoJsonStr);
             JSONArray resultsArray = movieJson.getJSONArray(TMDB_RESULTS);
+            String[] resultStr = new String[resultsArray.length()];
 
-            String[] resultStrs = new String[resultsArray.length()];
+            String path;
             for (int i = 0; i < resultsArray.length(); i++) {
-                resultStrs[i] = resultsArray.getJSONObject(i).getString(TMDB_POSTER);
+                path = resultsArray.getJSONObject(i).getString(TMDB_POSTER);
+                resultStr[i]=path;
+                Log.v(LOG_TAG, path);
             }
-            for (String s : resultStrs){
-                Log.v(LOG_TAG, "Movie poster path" + s);
-            }
-            return resultStrs;
+
+            return resultStr;
         }
 
         @Override
@@ -154,41 +149,52 @@ public class MovieFragment extends Fragment {
             }
 
             try {
-                return getMoviePosterFromJson(movieInfoJsonStr);
+                return getMoviePosterPathFromJson(movieInfoJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(String[] result){
+            final String baseUrl = "http://image.tmdb.org/t/p/w185/";
+
+            if (result != null){
+                Log.v("onPostExecute", "dentro del if");
+                mMoviesAdapter.clear();
+                for (int i = 0; i < result.length; i++) {
+                    Log.v("onPostExecute", "dentro del for");
+                    Log.v("onPostExecute", "result[" + i + "]=" + result[i]);
+                    Log.v("onPostExecute", baseUrl.concat(result[i]));
+                    mMoviesAdapter.add(baseUrl.concat(result[i]));
+                }
+            }
+            Log.v("onPostExecute", "fuera del if, saliendo de onPostExecute");
+        }
     }
-    public class ImageAdapter extends ArrayAdapter<ImageView> {
 
-        private ArrayList<ImageView> imgs;
+    public class ImageListAdapter extends ArrayAdapter<String> {
+
         private Context mContext;
+        private LayoutInflater inflater;
 
-        public ImageAdapter(Context context, int ImageViewResourceId, ArrayList<ImageView> imgs){
-            super(context, ImageViewResourceId, imgs);
+        private String[] imageUrls;
+
+        public ImageListAdapter(Context context,String[] imageUrls){
+            super(context, R.layout.grid_item_movie, imageUrls);
             mContext=context;
-            this.imgs=imgs;
+            this.imageUrls=imageUrls;
+
+            inflater = LayoutInflater.from(context);
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView;
 
-            if (convertView == null) {
-                imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setPadding(8, 8, 8, 8);
-            } else {
-                imageView = (ImageView) convertView;
-            }
+            Picasso.with(mContext).load(imageUrls[position]).into((ImageView) convertView);
 
-            //Picasso.with(context).load("[url]").into(imageView);
-            imageView.setImageResource(R.drawable.image);
-
-            return imageView;
+            return convertView;
         }
     }
 }
