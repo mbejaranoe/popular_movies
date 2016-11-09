@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MovieFragment extends Fragment {
 
@@ -35,9 +36,8 @@ public class MovieFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        String[] url = {};
 
-        mMoviesAdapter = new ImageListAdapter(getContext(), url);
+        mMoviesAdapter = new ImageListAdapter(getContext(), new ArrayList<String>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
@@ -45,8 +45,10 @@ public class MovieFragment extends Fragment {
 
         return rootView;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState){
+        Log.v("MovieFragmente", "onCreate");
         super.onCreate(savedInstanceState);
         FetchMovieTask movieTask = new FetchMovieTask();
         movieTask.execute();
@@ -57,6 +59,7 @@ public class MovieFragment extends Fragment {
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
         private String[] getMoviePosterPathFromJson(String movieInfoJsonStr) throws JSONException {
+            Log.v("FetchMovieTask", "getMoviePosterFromJson");
             String LOG_TAG = "getMoviePosterPathFromJson";
 
             final String TMDB_RESULTS = "results";
@@ -99,7 +102,10 @@ public class MovieFragment extends Fragment {
                 uriBuilder.path(PATH_URL+sortOrder);
                 uriBuilder.appendQueryParameter(apiKey, BuildConfig.TMDB_API_KEY);
 
+                Log.v("doInBackground", uriBuilder.toString());
+
                 URL url = new URL(uriBuilder.toString());
+                //URL url = new URL("https://api.themoviedb.org/3/movie/popular?api_key=ef5410465bc73f2bfde9bc1142cd42ae");
 
                 // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -180,19 +186,25 @@ public class MovieFragment extends Fragment {
         private Context mContext;
         private LayoutInflater inflater;
 
-        private String[] imageUrls;
+        private ArrayList<String> imgs;
 
-        public ImageListAdapter(Context context,String[] imageUrls){
-            super(context, R.layout.grid_item_movie, imageUrls);
+        public ImageListAdapter(Context context,ArrayList<String> imgs){
+            super(context, R.layout.grid_item_movie, imgs);
             mContext=context;
-            this.imageUrls=imageUrls;
+            this.imgs=imgs;
 
             inflater = LayoutInflater.from(context);
+            Log.v("ImageListAdapter", "constructor");
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
+            Log.v("getview", "posición " + position);
 
-            Picasso.with(mContext).load(imageUrls[position]).into((ImageView) convertView);
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.grid_item_movie, parent, false);
+            }
+
+            Picasso.with(mContext).load(imgs.get(position)).into((ImageView) convertView);
 
             return convertView;
         }
