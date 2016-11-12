@@ -72,7 +72,7 @@ public class MovieFragment extends Fragment {
             Movie[] resultStr = new Movie[resultsArray.length()];
 
             for (int i = 0; i < resultsArray.length(); i++) {
-
+                resultStr[i] = new Movie();
                 resultStr[i].title = resultsArray.getJSONObject(i).getString(TMDB_TITLE);
                 resultStr[i].date = resultsArray.getJSONObject(i).getString(TMDB_RELEASE_DATE);
                 resultStr[i].posterPath = baseUrl.concat(resultsArray.getJSONObject(i).getString(TMDB_POSTER));
