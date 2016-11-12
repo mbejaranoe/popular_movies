@@ -37,7 +37,7 @@ public class MovieFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mMoviesAdapter = new ImageListAdapter(getContext(), new ArrayList<String>());
+        mMoviesAdapter = new ImageListAdapter(getContext(), new ArrayList<Movie>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
@@ -48,38 +48,43 @@ public class MovieFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState){
-        Log.v("MovieFragmente", "onCreate");
+
         super.onCreate(savedInstanceState);
         FetchMovieTask movieTask = new FetchMovieTask();
         movieTask.execute();
     }
 
-    public class FetchMovieTask extends AsyncTask<Void, Void, String[]> {
+    public class FetchMovieTask extends AsyncTask<Void, Void, Movie[]> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
-        private String[] getMoviePosterPathFromJson(String movieInfoJsonStr) throws JSONException {
-            Log.v("FetchMovieTask", "getMoviePosterFromJson");
-            String LOG_TAG = "getMoviePosterPathFromJson";
+        private Movie[] getMovieInfoFromJson(String movieInfoJsonStr) throws JSONException {
 
             final String TMDB_RESULTS = "results";
+            final String TMDB_TITLE = "title";
+            final String TMDB_RELEASE_DATE = "release_date";
+            final String baseUrl = "http://image.tmdb.org/t/p/w185/";
             final String TMDB_POSTER = "poster_path";
+            final String TMDB_VOTE_AVERAGE = "vote_average";
+            final String TMDB_SYNOPSIS = "overview";
             JSONObject movieJson = new JSONObject(movieInfoJsonStr);
             JSONArray resultsArray = movieJson.getJSONArray(TMDB_RESULTS);
-            String[] resultStr = new String[resultsArray.length()];
+            Movie[] resultStr = new Movie[resultsArray.length()];
 
-            String path;
             for (int i = 0; i < resultsArray.length(); i++) {
-                path = resultsArray.getJSONObject(i).getString(TMDB_POSTER);
-                resultStr[i]=path;
-                Log.v(LOG_TAG, path);
+
+                resultStr[i].title = resultsArray.getJSONObject(i).getString(TMDB_TITLE);
+                resultStr[i].date = resultsArray.getJSONObject(i).getString(TMDB_RELEASE_DATE);
+                resultStr[i].posterPath = baseUrl.concat(resultsArray.getJSONObject(i).getString(TMDB_POSTER));
+                resultStr[i].voteAverage = resultsArray.getJSONObject(i).getString(TMDB_VOTE_AVERAGE);
+                resultStr[i].synopsis = resultsArray.getJSONObject(i).getString(TMDB_SYNOPSIS);
             }
 
             return resultStr;
         }
 
         @Override
-        protected String[] doInBackground(Void... params) {
+        protected Movie[] doInBackground(Void... params) {
 
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
@@ -102,10 +107,7 @@ public class MovieFragment extends Fragment {
                 uriBuilder.path(PATH_URL+sortOrder);
                 uriBuilder.appendQueryParameter(apiKey, BuildConfig.TMDB_API_KEY);
 
-                Log.v("doInBackground", uriBuilder.toString());
-
                 URL url = new URL(uriBuilder.toString());
-                //URL url = new URL("https://api.themoviedb.org/3/movie/popular?api_key=ef5410465bc73f2bfde9bc1142cd42ae");
 
                 // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -135,7 +137,7 @@ public class MovieFragment extends Fragment {
                 }
 
                 movieInfoJsonStr = buffer.toString();
-                Log.v("MovieFragment", movieInfoJsonStr);
+
             } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);
                 // If the code didn't successfully get movies info, there's no point in attemping
@@ -155,7 +157,7 @@ public class MovieFragment extends Fragment {
             }
 
             try {
-                return getMoviePosterPathFromJson(movieInfoJsonStr);
+                return getMovieInfoFromJson(movieInfoJsonStr);
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -164,47 +166,39 @@ public class MovieFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] result){
-            final String baseUrl = "http://image.tmdb.org/t/p/w185/";
+        protected void onPostExecute(Movie[] result){
 
             if (result != null){
-                Log.v("onPostExecute", "dentro del if");
                 mMoviesAdapter.clear();
                 for (int i = 0; i < result.length; i++) {
-                    Log.v("onPostExecute", "dentro del for");
-                    Log.v("onPostExecute", "result[" + i + "]=" + result[i]);
-                    Log.v("onPostExecute", baseUrl.concat(result[i]));
-                    mMoviesAdapter.add(baseUrl.concat(result[i]));
+                    mMoviesAdapter.add(result[i]);
                 }
             }
-            Log.v("onPostExecute", "fuera del if, saliendo de onPostExecute");
         }
     }
 
-    public class ImageListAdapter extends ArrayAdapter<String> {
+    public class ImageListAdapter extends ArrayAdapter<Movie> {
 
         private Context mContext;
         private LayoutInflater inflater;
 
-        private ArrayList<String> imgs;
+        private ArrayList<Movie> movies;
 
-        public ImageListAdapter(Context context,ArrayList<String> imgs){
-            super(context, R.layout.grid_item_movie, imgs);
+        public ImageListAdapter(Context context,ArrayList<Movie> movies){
+            super(context, R.layout.grid_item_movie, movies);
             mContext=context;
-            this.imgs=imgs;
+            this.movies=movies;
 
             inflater = LayoutInflater.from(context);
-            Log.v("ImageListAdapter", "constructor");
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            Log.v("getview", "posición " + position);
 
             if (convertView == null) {
                 convertView = inflater.inflate(R.layout.grid_item_movie, parent, false);
             }
 
-            Picasso.with(mContext).load(imgs.get(position)).into((ImageView) convertView);
+            Picasso.with(mContext).load(movies.get(position).posterPath).into((ImageView) convertView);
 
             return convertView;
         }
