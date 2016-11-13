@@ -16,11 +16,7 @@ public class Movie implements Parcelable {
 
     //Default constructor
     public Movie() {
-        title = "";
-        date = "";
-        posterPath = "";
-        voteAverage = "";
-        synopsis = "";
+
     }
 
     //Constructor for creating a Movie object from a parcelable

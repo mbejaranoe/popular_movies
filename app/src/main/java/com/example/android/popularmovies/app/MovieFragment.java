@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -42,6 +44,18 @@ public class MovieFragment extends Fragment {
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
         gridView.setAdapter(mMoviesAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //String title = mMoviesAdapter.getItem(i).title;
+                //Toast toast = Toast.makeText(getContext(), title, Toast.LENGTH_SHORT);
+                //toast.show();
+                Movie movie = mMoviesAdapter.getItem(i);
+                Intent intent = new Intent(getContext(), DetailActivity.class);
+                intent.putExtra("movie", movie);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
