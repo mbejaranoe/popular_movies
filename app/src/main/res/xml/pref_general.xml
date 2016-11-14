@@ -6,8 +6,8 @@
     <ListPreference
         android:title="@string/pref_order_label"
         android:key="@string/pref_order_key"
-        android:defaultValue="@string/pref_order_default"
-        android:entries="@array/order"
-        android:entryValues="@array/order_values"/>
+        android:defaultValue="@string/pref_order_popular"
+        android:entries="@array/pref_order_options"
+        android:entryValues="@array/pref_order_values"/>
 
 </PreferenceScreen>

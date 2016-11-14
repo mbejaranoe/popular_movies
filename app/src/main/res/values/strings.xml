@@ -3,16 +3,18 @@
     <string name="action_settings">Settings</string>
 
     <string name="pref_order_label">Sort order</string>
-    <string name="pref_order_key">order</string>
-    <string name="pref_order_default">popularity</string>
+    <string name="pref_order_key" translatable="false">order</string>
+    <string name="pref_order_default" translatable="false">popular</string>
     <string name="pref_order_label_popular">Most popular</string>
-    <string name="pref_order_label_rated">Higuest rated</string>
-    <string name="pref_order_popular">popularity</string>
-    <string name="pref_order_rated">vote_average</string>
+    <string name="pref_order_label_rated">Highest rated</string>
+    <string name="pref_order_popular">popular</string>
+    <string name="pref_order_rated">top_rated</string>
+
     <string name="title_activity_detail">Details</string>
     <string name="title_text">Title</string>
-    <string name="date_text">YYYY-MM-DD</string>
-    <string name="voteAverage_text">X.XX</string>
-    <string name="synopsis_text">An apocalyptic story set in the furthest reaches of our planet, in a stark desert landscape where humanity is broken, and most everyone is crazed fighting for the necessities of life. Within this world exist two rebels on the run who just might be able to restore order. There is Max, a man of action and a man of few words, who seeks peace of mind following the loss of his wife and child in the aftermath of the chaos. And Furiosa, a woman of action and a woman who believes her path to survival may be achieved if she can make it across the desert back to her childhood homeland.</string>
+    <string name="date_text">Date</string>
+    <string name="voteAverage_text">VoteAverage</string>
+    <string name="synopsis_text">Synopsis</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

@@ -2,9 +2,11 @@ package com.example.android.popularmovies.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +39,13 @@ public class MovieFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState){
+
+        super.onCreate(savedInstanceState);
+        updateMovie();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mMoviesAdapter = new ImageListAdapter(getContext(), new ArrayList<Movie>());
@@ -47,9 +56,6 @@ public class MovieFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //String title = mMoviesAdapter.getItem(i).title;
-                //Toast toast = Toast.makeText(getContext(), title, Toast.LENGTH_SHORT);
-                //toast.show();
                 Movie movie = mMoviesAdapter.getItem(i);
                 Intent intent = new Intent(getContext(), DetailActivity.class);
                 intent.putExtra("movie", movie);
@@ -60,15 +66,22 @@ public class MovieFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState){
 
-        super.onCreate(savedInstanceState);
+
+    private void updateMovie() {
         FetchMovieTask movieTask = new FetchMovieTask();
-        movieTask.execute();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String sortCriteria = prefs.getString(getString(R.string.pref_order_key),getString(R.string.pref_order_default));
+        movieTask.execute(sortCriteria);
     }
 
-    public class FetchMovieTask extends AsyncTask<Void, Void, Movie[]> {
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateMovie();
+    }
+
+    public class FetchMovieTask extends AsyncTask<String, Void, Movie[]> {
 
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
 
@@ -98,21 +111,21 @@ public class MovieFragment extends Fragment {
         }
 
         @Override
-        protected Movie[] doInBackground(Void... params) {
+        protected Movie[] doInBackground(String... params) {
 
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
+            if (params.length==0) {
+                return null;
+            }
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
             String movieInfoJsonStr;
 
             try {
-                // Construct the URL for the TMDB query
                 final String SCHEME_URL = "https";
                 final String PATH_URL = "//api.themoviedb.org/3/movie/";
-                String sortOrder = "popular";
+                String sortOrder = params[0];
                 final String apiKey = "api_key";
 
                 Uri.Builder uriBuilder;
@@ -123,12 +136,10 @@ public class MovieFragment extends Fragment {
 
                 URL url = new URL(uriBuilder.toString());
 
-                // Create the request to TMDB, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
 
-                // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
                 StringBuffer buffer = new StringBuffer();
                 if (inputStream == null) {
@@ -139,14 +150,10 @@ public class MovieFragment extends Fragment {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
                     buffer.append(line + "\n");
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
                     return null;
                 }
 
@@ -154,8 +161,6 @@ public class MovieFragment extends Fragment {
 
             } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);
-                // If the code didn't successfully get movies info, there's no point in attemping
-                // to parse it.
                 return null;
             } finally {
                 if (urlConnection != null) {

@@ -14,13 +14,9 @@ public class Movie implements Parcelable {
     String voteAverage;
     String synopsis;
 
-    //Default constructor
     public Movie() {
 
     }
-
-    //Constructor for creating a Movie object from a parcelable
-    //@param in
 
     public Movie (Parcel in) {
         readFromParcel(in);
@@ -31,11 +27,6 @@ public class Movie implements Parcelable {
         return 0;
     }
 
-    /**
-     * Write on a parcel, order is important
-     * @param dest Parcel to write in
-     * @param flags
-     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
@@ -45,10 +36,6 @@ public class Movie implements Parcelable {
         dest.writeString(synopsis);
     }
 
-    /**
-     * Read from a parcel, order is important
-     * @param in
-     */
     private void readFromParcel(Parcel in) {
         title = in.readString();
         date = in.readString();
