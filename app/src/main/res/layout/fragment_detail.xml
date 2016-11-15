@@ -1,56 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.android.popularmovies.app.DetailActivity$DetailFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.android.popularmovies.app.DetailActivity$DetailFragment">
+    android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:id="@+id/poster_ImageView"
-        android:layout_margin="@dimen/activity_horizontal_margin"/>
-
-    <TextView
-        android:text="@string/title_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/poster_ImageView"
-        android:layout_alignParentTop="true"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:id="@+id/title_textView" />
-
-    <TextView
-        android:text="@string/date_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/poster_ImageView"
-        android:layout_below="@id/title_textView"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:id="@+id/date_textView" />
-
-    <TextView
-        android:text="@string/voteAverage_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/poster_ImageView"
-        android:layout_below="@id/date_textView"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:id="@+id/vote_Average_textView" />
-
-    <TextView
-        android:text="@string/synopsis_text"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/synopsis_textView"
-        android:layout_below="@id/poster_ImageView"
-        android:scrollbars="vertical"
-        android:layout_margin="@dimen/activity_horizontal_margin" />
+        android:layout_height="match_parent">
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/poster_ImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/activity_horizontal_margin" />
+
+        <TextView
+            android:id="@+id/title_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_toRightOf="@id/poster_ImageView"
+            android:text="@string/title_text" />
+
+        <TextView
+            android:id="@+id/date_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_textView"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_toRightOf="@id/poster_ImageView"
+            android:text="@string/date_text" />
+
+        <TextView
+            android:id="@+id/vote_Average_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/date_textView"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_toRightOf="@id/poster_ImageView"
+            android:text="@string/voteAverage_text" />
+
+        <TextView
+            android:id="@+id/synopsis_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/poster_ImageView"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:scrollbars="vertical"
+            android:text="@string/synopsis_text" />
+
+    </RelativeLayout>
+</ScrollView>
