@@ -53,7 +53,7 @@ public class MovieFragment extends Fragment {
 
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
         gridView.setAdapter(mMoviesAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Movie movie = mMoviesAdapter.getItem(i);
