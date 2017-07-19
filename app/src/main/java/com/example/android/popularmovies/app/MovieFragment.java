@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +25,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Movie[]> {
 
     private static final String LOG_TAG = MovieFragment.class.getSimpleName();
+
+    private RecyclerView mRecyclerView;
+    private GridLayoutManager mGridLayoutManager;
+    private MovieAdapter mMovieAdapter;
+    private ArrayList<Movie> mMovieList;
+
 
     private static final int MOVIE_LOADER_ID = 0;
 
@@ -44,6 +53,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_movie);
+        mGridLayoutManager = new GridLayoutManager(getContext(), 3);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
+
+        mMovieList = new ArrayList<>();
+
+        mMovieAdapter = new MovieAdapter(mMovieList);
+        mRecyclerView.setAdapter(mMovieAdapter);
 
         return rootView;
     }
@@ -183,6 +200,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<Movie[]> loader, Movie[] data) {
+        if (data != null){
+            ArrayList<Movie> arrayListMovie = new ArrayList<>();
+            for (int i = 0; i < data.length; i++) {
+                arrayListMovie.add(data[i]);
+            }
+            mMovieAdapter = new MovieAdapter(arrayListMovie);
+            mMovieAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
