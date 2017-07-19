@@ -8,25 +8,30 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
-    private MovieAdapter movieAdapter;
     private RecyclerView mRecyclerView;
+    private GridLayoutManager mGridLayoutManager;
+    private MovieAdapter mMovieAdapter;
+    private ArrayList<Movie> mMovieList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_movie);
+        mGridLayoutManager = new GridLayoutManager(this, 3);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
+
+        mMovieList = new ArrayList<>();
+
+        mMovieAdapter = new MovieAdapter(mMovieList);
+        mRecyclerView.setAdapter(mMovieAdapter);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.container, new MovieFragment()).commit();
-
         }
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_movie);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(mRecyclerView.getContext(), 3);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        mRecyclerView.setHasFixedSize(true);
-        movieAdapter = new MovieAdapter();
-        mRecyclerView.setAdapter(movieAdapter);
     }
 
     @Override

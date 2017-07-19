@@ -1,12 +1,16 @@
 package com.example.android.popularmovies.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 /**
  * Created by Manolo on 18/07/2017.
@@ -16,7 +20,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private static final String TAG = MovieAdapter.class.getSimpleName();
 
-    public MovieAdapter (){
+    private ArrayList<Movie> mMovieList;
+
+    public MovieAdapter (ArrayList<Movie> movieList){
+        mMovieList=movieList;
     }
 
     @Override
@@ -34,25 +41,38 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        Log.d(TAG, "#" + position);
-        holder.bind(position);
-    }
+        Movie itemMovie = mMovieList.get(position);
+        holder.bind(itemMovie);
+}
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mMovieList.size();
     }
 
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder {
-        final ImageView moviePoster;
+    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private ImageView moviePoster;
+        private Movie mMovie;
 
         public MovieAdapterViewHolder(View view){
             super(view);
 
             moviePoster = (ImageView) view.findViewById(R.id.grid_item_movie_imageview);
+
+            view.setOnClickListener(this);
         }
 
-        void bind(int position){
+        void bind(Movie movie){
+            mMovie = movie;
+            Picasso.with(moviePoster.getContext()).load(movie.posterPath).into(moviePoster);
+        }
+
+        @Override
+        public void onClick(View view) {
+            //código para abrir la actividad con los detalles de la película concreta
+            Intent intent = new Intent(view.getContext(), DetailActivity.class);
+            intent.putExtra("movie", mMovie);
+            view.getContext().startActivity(intent);
 
         }
     }

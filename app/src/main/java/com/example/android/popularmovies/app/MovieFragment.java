@@ -1,7 +1,5 @@
 package com.example.android.popularmovies.app;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,12 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,11 +23,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Movie[]> {
 
-    private ImageListAdapter mMoviesAdapter;
     private static final String LOG_TAG = MovieFragment.class.getSimpleName();
 
     private static final int MOVIE_LOADER_ID = 0;
@@ -53,20 +43,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mMoviesAdapter = new ImageListAdapter(getContext(), new ArrayList<Movie>());
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movies);
-        gridView.setAdapter(mMoviesAdapter);
-    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Movie movie = mMoviesAdapter.getItem(i);
-                Intent intent = new Intent(getContext(), DetailActivity.class);
-                intent.putExtra("movie", movie);
-                startActivity(intent);
-            }
-        });
 
         return rootView;
     }
@@ -206,44 +183,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<Movie[]> loader, Movie[] data) {
-
-        if (data != null){
-            mMoviesAdapter.clear();
-            for (int i = 0; i < data.length; i++) {
-                mMoviesAdapter.add(data[i]);
-            }
-        }
     }
 
     @Override
     public void onLoaderReset(Loader<Movie[]> loader) {
 
-    }
-
-    public class ImageListAdapter extends ArrayAdapter<Movie> {
-
-        private Context mContext;
-        private LayoutInflater inflater;
-
-        private ArrayList<Movie> movies;
-
-        public ImageListAdapter(Context context,ArrayList<Movie> movies){
-            super(context, R.layout.grid_item_movie, movies);
-            mContext=context;
-            this.movies=movies;
-
-            inflater = LayoutInflater.from(context);
-        }
-
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.grid_item_movie, parent, false);
-            }
-
-            Picasso.with(mContext).load(movies.get(position).posterPath).into((ImageView) convertView);
-
-            return convertView;
-        }
     }
 }
