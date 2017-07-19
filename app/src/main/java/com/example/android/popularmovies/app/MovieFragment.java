@@ -36,7 +36,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private MovieAdapter mMovieAdapter;
     private ArrayList<Movie> mMovieList;
 
-
     private static final int MOVIE_LOADER_ID = 0;
 
     public MovieFragment(){
