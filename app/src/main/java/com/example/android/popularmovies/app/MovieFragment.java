@@ -53,7 +53,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_movie);
-        mGridLayoutManager = new GridLayoutManager(getContext(), 3);
+        mGridLayoutManager = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         mMovieList = new ArrayList<>();
@@ -190,11 +190,13 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 return result;
             }
 
+            /*
             @Override
             public void deliverResult(Movie[] data){
                 mMovieData = data;
                 super.deliverResult(data);
             }
+            */
         };
     }
 
@@ -206,7 +208,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                 arrayListMovie.add(data[i]);
             }
             mMovieAdapter = new MovieAdapter(arrayListMovie);
-            mMovieAdapter.notifyDataSetChanged();
+            mRecyclerView.setAdapter(mMovieAdapter);
         }
     }
 
