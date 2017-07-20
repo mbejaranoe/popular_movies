@@ -180,16 +180,17 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                         }
                     }
                 }
-
+                Movie[] result = null;
                 try {
-                    return getMovieInfoFromJson(movieInfoJsonStr);
+                    result = getMovieInfoFromJson(movieInfoJsonStr);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.getMessage(), e);
                     e.printStackTrace();
                 }
-                return null;
+                return result;
             }
 
+            @Override
             public void deliverResult(Movie[] data){
                 mMovieData = data;
                 super.deliverResult(data);
