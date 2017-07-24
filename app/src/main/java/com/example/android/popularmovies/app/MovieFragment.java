@@ -53,7 +53,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_movie);
-        mGridLayoutManager = new GridLayoutManager(getContext(), 3, GridLayoutManager.VERTICAL, false);
+        mGridLayoutManager = new GridLayoutManager(getContext(), 4);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         mMovieList = new ArrayList<>();

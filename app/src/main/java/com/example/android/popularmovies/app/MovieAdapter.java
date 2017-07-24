@@ -69,7 +69,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         @Override
         public void onClick(View view) {
-            //código para abrir la actividad con los detalles de la película concreta
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
             intent.putExtra("movie", mMovie);
             view.getContext().startActivity(intent);
