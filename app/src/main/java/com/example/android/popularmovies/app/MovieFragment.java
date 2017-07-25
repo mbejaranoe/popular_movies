@@ -1,9 +1,6 @@
 package com.example.android.popularmovies.app;
 
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -15,16 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.android.popularmovies.app.utilities.NetworkUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Movie[]> {
@@ -122,6 +116,24 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             @Override
             public Movie[] loadInBackground() {
 
+                String movieInfoJsonStr;
+
+                try {
+                    movieInfoJsonStr = NetworkUtils.getResponseFromHttpUrl(NetworkUtils.getURL(getContext()));
+                } catch (IOException e) {
+                    Log.e("MovieFragment", "Error ", e);
+                    return null;
+                }
+                Movie[] result = null;
+                try {
+                    result = getMovieInfoFromJson(movieInfoJsonStr);
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
+                return result;
+
+                /*
                 HttpURLConnection urlConnection = null;
                 BufferedReader reader = null;
 
@@ -188,15 +200,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
                     e.printStackTrace();
                 }
                 return result;
+                */
             }
-
-            /*
-            @Override
-            public void deliverResult(Movie[] data){
-                mMovieData = data;
-                super.deliverResult(data);
-            }
-            */
         };
     }
 
@@ -216,4 +221,33 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onLoaderReset(Loader<Movie[]> loader) {
 
     }
+
+    /*
+    private Cursor getMovieInfo(){
+        return mDb.query(
+                MovieContract.MovieEntry.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                MovieContract.MovieEntry.COLUMN_POPULARITY
+        );
+    }
+
+    private long addMovies(ContentValues[] contentValues){
+        int rowsInserted = 0;
+
+        if (contentValues.length == 0 || contentValues == null) {
+            return 0;
+        } else {
+            for (int i = 0; i < contentValues.length ; i++) {
+                contentValues[i].put(MovieContract.MovieEntry.COLUMN_FAVORITE, 0);
+                rowsInserted = rowsInserted + mDb.insert(MovieContract.MovieEntry.TABLE_NAME, null, contentValues[i]);
+            }
+        }
+        return rowsInserted;
+    }
+    */
+
 }

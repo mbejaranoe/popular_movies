@@ -28,19 +28,19 @@ public final class NetworkUtils {
 
     private static final String API_KEY_PARAM = "api_key";
 
+    /*
+    This method will be only used when either "Most popular" or "Highest rated" options are
+    selected in the settings menu. The case for the "Favorite" option must be implemented out
+    of this method.
+     */
     public static URL getURL(Context context){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
         String keyForSortOrder = context.getString(R.string.pref_order_key);
         String defaultOrder = context.getString(R.string.pref_order_default);
         String preferredOrder = sp.getString(keyForSortOrder, defaultOrder);
-        String preferredOrderFavorite = context.getString(R.string.pref_order_favorite);
 
-        if (!preferredOrder.equals(preferredOrderFavorite)) {
-            return buildURL(preferredOrder);
-        } else {
-            return null;
-        }
+        return buildURL(preferredOrder);
     }
 
     private static URL buildURL(String order){
