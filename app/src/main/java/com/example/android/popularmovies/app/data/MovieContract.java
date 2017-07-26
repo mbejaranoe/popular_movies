@@ -1,5 +1,6 @@
 package com.example.android.popularmovies.app.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -12,11 +13,23 @@ import android.provider.BaseColumns;
 
 public class MovieContract {
 
+    /* This is the authority for the content provider */
+    public static final String AUTHORITY = "com.example.android.popularmovies.app";
+
+    /* The base for the uri */
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+
+    /* The path for all the movies */
+    public static final String PATH_MOVIES = "movies";
+
     /* Inner class that defines the table contents of the movie table */
     public static final class MovieEntry implements BaseColumns {
 
+        /* MovieEntry content URI = base content URI + path */
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIES).build();
+
         /* Used internally as the name of the movie table. */
-        public static final String TABLE_NAME = "movie";
+        public static final String TABLE_NAME = "movies";
 
         /* The movie title */
         public static final String COLUMN_TITLE = "title";

@@ -2,7 +2,9 @@ package com.example.android.popularmovies.app.utilities;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.os.Parcel;
 
+import com.example.android.popularmovies.app.Movie;
 import com.example.android.popularmovies.app.data.MovieContract;
 
 import org.json.JSONArray;
@@ -29,6 +31,70 @@ public final class TMDBJsonUtils {
     private static final String TMDB_RELEASE_DATE = "release_date";
     private static final String TMDB_POPULARITY = "popularity";
     private static final String TMDB_VOTE_AVERAGE = "vote_average";
+
+    public static Movie[] getMovieFromJson(Context context, String movieInfoJsonStr) throws JSONException {
+
+        JSONObject movieInfoJson = new JSONObject(movieInfoJsonStr);
+
+        /* Is there an error? */
+        if (movieInfoJson.has(TMDB_MESSAGE_CODE)) {
+            int errorCode = movieInfoJson.getInt(TMDB_MESSAGE_CODE);
+
+            switch (errorCode) {
+                case HttpURLConnection.HTTP_OK:
+                    break;
+                default:
+                    /* Server probably down */
+                    return null;
+            }
+        }
+
+        /* Get the JSON object representing info from one item (movie) */
+        JSONArray movieArray = movieInfoJson.getJSONArray(TMDB_RESULT);
+
+        Movie[] parsedMovieData = new Movie[movieArray.length()];
+
+        for (int i = 0; i < movieArray.length(); i++) {
+            /* These are the values that will be collected */
+            String title;
+            String id;
+            String posterPath;
+            String synopsis;
+            String releaseDate;
+            String popularity;
+            String voteAverage;
+
+            JSONObject movieInfo = movieArray.getJSONObject(i);
+
+            title = movieInfo.getString(TMDB_TITLE);
+            id = movieInfo.getString(TMDB_ID);
+            posterPath = movieInfo.getString(TMDB_POSTER_PATH);
+            synopsis  = movieInfo.getString(TMDB_SYNOPSIS);
+            releaseDate = movieInfo.getString(TMDB_RELEASE_DATE);
+            popularity = movieInfo.getString(TMDB_POPULARITY);
+            voteAverage = movieInfo.getString(TMDB_VOTE_AVERAGE);
+
+            Movie movie = new Movie();
+
+            Parcel dest = null;
+            dest.writeString(title);
+            dest.writeString(releaseDate);
+            dest.writeString(posterPath);
+            dest.writeString(voteAverage);
+            dest.writeString(synopsis);
+
+            /*
+            dest.writeString(id);
+            dest.writeString(popularity);
+            */
+
+            movie.writeToParcel(dest, 0);
+
+            parsedMovieData[i] = movie;
+        }
+
+        return parsedMovieData;
+    }
 
     public static ContentValues[] getMovieContentValuesFromJson(Context context, String movieInfoJsonStr) throws JSONException {
 

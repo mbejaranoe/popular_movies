@@ -3,6 +3,9 @@
     package="com.example.android.popularmovies.app">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!--
+    <uses-permission android:name="com.example.android.popularmovies.app.MovieContentProvider"/>
+    -->
 
     <application
         android:allowBackup="true"
@@ -37,6 +40,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity"/>
         </activity>
+
+        <provider
+            android:authorities="com.example.android.popularmovies.app"
+            android:name="com.example.android.popularmovies.app.data.MovieContentProvider"
+            android:exported="false"
+            />
     </application>
 
 </manifest>
