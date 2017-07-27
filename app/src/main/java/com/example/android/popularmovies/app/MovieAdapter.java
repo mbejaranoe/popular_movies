@@ -2,15 +2,15 @@ package com.example.android.popularmovies.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.android.popularmovies.app.data.MovieContract;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 /**
  * Created by Manolo on 18/07/2017.
@@ -20,10 +20,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     private static final String TAG = MovieAdapter.class.getSimpleName();
 
-    private ArrayList<Movie> mMovieList;
+    private Cursor mCursor;
 
-    public MovieAdapter (ArrayList<Movie> movieList){
-        mMovieList=movieList;
+    public MovieAdapter (){
     }
 
     @Override
@@ -41,18 +40,26 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
-        Movie itemMovie = mMovieList.get(position);
-        holder.bind(itemMovie);
-}
+
+        mCursor.moveToPosition(position);
+
+        //int nameColumnIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER);
+        //Picasso.with(holder.moviePoster.getContext()).load(mCursor.getString(nameColumnIndex)).into(holder.moviePoster);
+        Picasso.with(holder.moviePoster.getContext()).load(mCursor.getString(MovieFragment.INDEX_MOVIE_POSTER_PATH)).into(holder.moviePoster);
+    }
 
     @Override
     public int getItemCount() {
-        return mMovieList.size();
+        return mCursor.getCount();
+    }
+
+    void swapCursor(Cursor newCursor){
+        mCursor = newCursor;
+        notifyDataSetChanged();
     }
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView moviePoster;
-        private Movie mMovie;
 
         public MovieAdapterViewHolder(View view){
             super(view);
@@ -62,15 +69,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             view.setOnClickListener(this);
         }
 
-        void bind(Movie movie){
-            mMovie = movie;
-            Picasso.with(moviePoster.getContext()).load(movie.posterPath).into(moviePoster);
-        }
-
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
-            intent.putExtra("movie", mMovie);
+            int adapterPosition = getAdapterPosition();
+            mCursor.moveToPosition(adapterPosition);
+            int id = mCursor.getInt(mCursor.getColumnIndex(MovieContract.MovieEntry._ID));
+            intent.putExtra("movie", id);
             view.getContext().startActivity(intent);
 
         }

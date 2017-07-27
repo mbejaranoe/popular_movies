@@ -1,36 +1,33 @@
 package com.example.android.popularmovies.app;
 
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.popularmovies.app.utilities.NetworkUtils;
+import com.example.android.popularmovies.app.data.MovieContract;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Movie[]> {
+public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = MovieFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
     private MovieAdapter mMovieAdapter;
-    private ArrayList<Movie> mMovieList;
 
     private static final int MOVIE_LOADER_ID = 0;
+
+    public static final String[] FRAGMENT_MOVIE_PROJECTION = {MovieContract.MovieEntry.COLUMN_MOVIE_POSTER};
+
+    public static final int INDEX_MOVIE_POSTER_PATH = 0;
 
     public MovieFragment(){
     }
@@ -50,9 +47,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         mGridLayoutManager = new GridLayoutManager(getContext(), 4);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
-        mMovieList = new ArrayList<>();
-
-        mMovieAdapter = new MovieAdapter(mMovieList);
+        mMovieAdapter = new MovieAdapter();
         mRecyclerView.setAdapter(mMovieAdapter);
 
         return rootView;
@@ -62,7 +57,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         int loaderId = MOVIE_LOADER_ID;
 
         LoaderManager loaderManager = this.getLoaderManager();
-        LoaderManager.LoaderCallbacks<Movie[]> callback = this;
+        LoaderManager.LoaderCallbacks<Cursor> callback = this;
         loaderManager.initLoader(loaderId, null, callback);
     }
 
@@ -73,153 +68,32 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     }
 
     @Override
-    public Loader<Movie[]> onCreateLoader(int id, Bundle args) {
+    public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
 
-        return new AsyncTaskLoader<Movie[]>(getContext()) {
+        switch (loaderId){
+            case MOVIE_LOADER_ID:
+                Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
+                String sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + "DESC";
 
-            Movie[] mMovieData = null;
-
-            @Override
-            protected void onStartLoading(){
-                if (mMovieData != null) {
-                    deliverResult(mMovieData);
-                } else {
-                    forceLoad();
-                }
-            }
-
-            private Movie[] getMovieInfoFromJson(String movieInfoJsonStr) throws JSONException {
-
-                final String TMDB_RESULTS = "results";
-                final String TMDB_TITLE = "title";
-                final String TMDB_RELEASE_DATE = "release_date";
-                final String baseUrl = "http://image.tmdb.org/t/p/w185/";
-                final String TMDB_POSTER = "poster_path";
-                final String TMDB_VOTE_AVERAGE = "vote_average";
-                final String TMDB_SYNOPSIS = "overview";
-                JSONObject movieJson = new JSONObject(movieInfoJsonStr);
-                JSONArray resultsArray = movieJson.getJSONArray(TMDB_RESULTS);
-                Movie[] resultStr = new Movie[resultsArray.length()];
-
-                for (int i = 0; i < resultsArray.length(); i++) {
-                    resultStr[i] = new Movie();
-                    resultStr[i].title = resultsArray.getJSONObject(i).getString(TMDB_TITLE);
-                    resultStr[i].date = resultsArray.getJSONObject(i).getString(TMDB_RELEASE_DATE);
-                    resultStr[i].posterPath = baseUrl.concat(resultsArray.getJSONObject(i).getString(TMDB_POSTER));
-                    resultStr[i].voteAverage = resultsArray.getJSONObject(i).getString(TMDB_VOTE_AVERAGE);
-                    resultStr[i].synopsis = resultsArray.getJSONObject(i).getString(TMDB_SYNOPSIS);
-                }
-
-                return resultStr;
-            }
-
-            @Override
-            public Movie[] loadInBackground() {
-
-                String movieInfoJsonStr;
-
-                try {
-                    movieInfoJsonStr = NetworkUtils.getResponseFromHttpUrl(NetworkUtils.getURL(getContext()));
-                } catch (IOException e) {
-                    Log.e("MovieFragment", "Error ", e);
-                    return null;
-                }
-                Movie[] result = null;
-                try {
-                    result = getMovieInfoFromJson(movieInfoJsonStr);
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
-                return result;
-
-                /*
-                HttpURLConnection urlConnection = null;
-                BufferedReader reader = null;
-
-                String movieInfoJsonStr;
-
-                try {
-                    final String SCHEME_URL = "https";
-                    final String PATH_URL = "//api.themoviedb.org/3/movie/";
-                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    String sortOrder = prefs.getString(getString(R.string.pref_order_key),getString(R.string.pref_order_default));
-                    final String apiKey = "api_key";
-
-                    Uri.Builder uriBuilder;
-                    uriBuilder = new Uri.Builder();
-                    uriBuilder.scheme(SCHEME_URL);
-                    uriBuilder.path(PATH_URL+sortOrder);
-                    uriBuilder.appendQueryParameter(apiKey, BuildConfig.TMDB_API_KEY);
-
-                    URL url = new URL(uriBuilder.toString());
-
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setRequestMethod("GET");
-                    urlConnection.connect();
-
-                    InputStream inputStream = urlConnection.getInputStream();
-                    StringBuffer buffer = new StringBuffer();
-                    if (inputStream == null) {
-                        // Nothing to do.
-                        return null;
-                    }
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        buffer.append(line + "\n");
-                    }
-
-                    if (buffer.length() == 0) {
-                        return null;
-                    }
-
-                    movieInfoJsonStr = buffer.toString();
-
-                } catch (IOException e) {
-                    Log.e("MovieFragment", "Error ", e);
-                    return null;
-                } finally {
-                    if (urlConnection != null) {
-                        urlConnection.disconnect();
-                    }
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (final IOException e) {
-                            Log.e("MovieFragment", "Error closing stream", e);
-                        }
-                    }
-                }
-                Movie[] result = null;
-                try {
-                    result = getMovieInfoFromJson(movieInfoJsonStr);
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.getMessage(), e);
-                    e.printStackTrace();
-                }
-                return result;
-                */
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Movie[]> loader, Movie[] data) {
-        if (data != null){
-            ArrayList<Movie> arrayListMovie = new ArrayList<>();
-            for (int i = 0; i < data.length; i++) {
-                arrayListMovie.add(data[i]);
-            }
-            mMovieAdapter = new MovieAdapter(arrayListMovie);
-            mRecyclerView.setAdapter(mMovieAdapter);
+                return new CursorLoader(getContext(),
+                        movieQueryUri,
+                        FRAGMENT_MOVIE_PROJECTION,
+                        null,
+                        null,
+                        sortOrder);
+            default:
+                throw new RuntimeException("Loader not implemented: " + loaderId);
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<Movie[]> loader) {
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mMovieAdapter.swapCursor(data);
+    }
 
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mMovieAdapter.swapCursor(null);
     }
 
     /*
