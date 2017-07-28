@@ -1,6 +1,7 @@
 package com.example.android.popularmovies.app;
 
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -108,14 +110,33 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         switch (loaderId){
             case MOVIE_LOADER_ID:
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String pref_order = sharedPreferences.getString(getString(R.string.pref_order_key), getString(R.string.pref_order_default));
+
+                String selection;
+                String[] selectionArgs;
+                if (pref_order.equals(getString(R.string.pref_order_favorite))){
+                    selection = MovieContract.MovieEntry.COLUMN_FAVORITE + "=?";
+                    selectionArgs = new String[]{"1"};
+                } else {
+                    selection = null;
+                    selectionArgs = null;
+                }
+
+                String sortOrder;
+                if (pref_order.equals(getString(R.string.pref_order_rated))){
+                    sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " DESC";
+                } else {
+                    sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
+                }
+
                 Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
-                String sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
 
                 return new CursorLoader(getContext(),
                         movieQueryUri,
                         FRAGMENT_MOVIE_PROJECTION,
-                        null,
-                        null,
+                        selection,
+                        selectionArgs,
                         sortOrder);
             default:
                 throw new RuntimeException("Loader not implemented: " + loaderId);
@@ -131,33 +152,4 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onLoaderReset(Loader<Cursor> loader) {
         mMovieAdapter.swapCursor(null);
     }
-
-    /*
-    private Cursor getMovieInfo(){
-        return mDb.query(
-                MovieContract.MovieEntry.TABLE_NAME,
-                null,
-                null,
-                null,
-                null,
-                null,
-                MovieContract.MovieEntry.COLUMN_POPULARITY
-        );
-    }
-
-    private long addMovies(ContentValues[] contentValues){
-        int rowsInserted = 0;
-
-        if (contentValues.length == 0 || contentValues == null) {
-            return 0;
-        } else {
-            for (int i = 0; i < contentValues.length ; i++) {
-                contentValues[i].put(MovieContract.MovieEntry.COLUMN_FAVORITE, 0);
-                rowsInserted = rowsInserted + mDb.insert(MovieContract.MovieEntry.TABLE_NAME, null, contentValues[i]);
-            }
-        }
-        return rowsInserted;
-    }
-    */
-
 }

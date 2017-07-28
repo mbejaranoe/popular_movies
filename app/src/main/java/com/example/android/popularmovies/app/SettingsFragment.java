@@ -1,11 +1,14 @@
 package com.example.android.popularmovies.app;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
+
+import com.example.android.popularmovies.app.data.MovieContract;
 
 /**
  * Created by Manolo on 17/07/2017.
@@ -58,9 +61,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-
         if (key.equals(getString(R.string.pref_order_key))){
-            //reordenar la consulta
+            updateMovieSortOrder(sharedPreferences, key);
         } else {
             return;
         }
@@ -69,4 +71,30 @@ public class SettingsFragment extends PreferenceFragmentCompat implements
                 setPreferenceSummary(preference, sharedPreferences.getString(key, ""));
         }
     }
+
+    public void updateMovieSortOrder(SharedPreferences sharedPreferences, String key){
+        Activity activity = getActivity();
+
+        String pref_order = sharedPreferences.getString(key, getString(R.string.pref_order_default));
+
+        String[] projection = new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_POSTER};
+
+        String selection;
+        String[] selectionArgs;
+        if (pref_order.equals(getString(R.string.pref_order_favorite))){
+            selection = MovieContract.MovieEntry.COLUMN_FAVORITE + "=?";
+            selectionArgs = new String[]{"1"};
+        } else {
+            selection = null;
+            selectionArgs = null;
+        }
+
+        String sortOrder;
+        if (pref_order.equals(getString(R.string.pref_order_rated))){
+            sortOrder = MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " DESC";
+        } else {
+            sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
+        }
+    }
+
 }
