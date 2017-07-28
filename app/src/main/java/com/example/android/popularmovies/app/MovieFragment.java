@@ -3,6 +3,7 @@ package com.example.android.popularmovies.app;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -10,12 +11,17 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.popularmovies.app.data.MovieContract;
 import com.example.android.popularmovies.app.utilities.NetworkUtils;
+
+import org.json.JSONException;
+
+import java.io.IOException;
 
 public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -34,10 +40,38 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public MovieFragment(){
     }
 
+    public class fetchMovieDataAsyncTask extends AsyncTask<Void, Void, ContentValues[]> {
+
+        @Override
+        protected ContentValues[] doInBackground(Void... voids) {
+            String movieInfoJsonStr;
+
+            try {
+                movieInfoJsonStr = NetworkUtils.getResponseFromHttpUrl(NetworkUtils.getURL(getContext()));
+            } catch (IOException e) {
+                Log.e("MovieFragment", "Error ", e);
+                return null;
+            }
+            ContentValues[] result = null;
+            try {
+                result = NetworkUtils.getMovieInfoFromJson(movieInfoJsonStr);
+            } catch (JSONException e) {
+                Log.e("NetworkUtils", e.getMessage(), e);
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(ContentValues[] cv) {
+            getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,cv);
+        }
+    }
     @Override
     public void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
+        new fetchMovieDataAsyncTask().execute();
         updateMovies();
     }
 
@@ -74,9 +108,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         switch (loaderId){
             case MOVIE_LOADER_ID:
-                ContentValues[] contentValues = NetworkUtils.fetchMovieData(getContext());
-                getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,contentValues);
-
                 Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
                 String sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
 

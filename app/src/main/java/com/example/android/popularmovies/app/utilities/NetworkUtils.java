@@ -102,26 +102,7 @@ public final class NetworkUtils {
         return byteArray;
     }
 
-    public static ContentValues[] fetchMovieData(Context context){
-        String movieInfoJsonStr;
-
-        try {
-            movieInfoJsonStr = NetworkUtils.getResponseFromHttpUrl(NetworkUtils.getURL(context));
-        } catch (IOException e) {
-            Log.e("MovieFragment", "Error ", e);
-            return null;
-        }
-        ContentValues[] result = null;
-        try {
-            result = getMovieInfoFromJson(movieInfoJsonStr);
-        } catch (JSONException e) {
-            Log.e("NetworkUtils", e.getMessage(), e);
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    private static ContentValues[] getMovieInfoFromJson(String movieInfoJsonStr) throws JSONException {
+    public static ContentValues[] getMovieInfoFromJson(String movieInfoJsonStr) throws JSONException {
         final String TMDB_RESULTS = "results";
         final String TMDB_TITLE = "title";
         final String TMDB_ID = "id";
@@ -136,6 +117,7 @@ public final class NetworkUtils {
         ContentValues[] resultStr = new ContentValues[resultsArray.length()];
 
         for (int i = 0; i < resultsArray.length(); i++) {
+            resultStr[i] = new ContentValues();
             resultStr[i].put(MovieContract.MovieEntry.COLUMN_TITLE, resultsArray.getJSONObject(i).getString(TMDB_TITLE));
             resultStr[i].put(MovieContract.MovieEntry.COLUMN_TMDB_ID, resultsArray.getJSONObject(i).getString(TMDB_ID));
             byte[] poster = NetworkUtils.getImageFromURL(baseUrl+resultsArray.getJSONObject(i).getString(TMDB_POSTER));
