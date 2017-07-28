@@ -32,6 +32,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
     private MovieAdapter mMovieAdapter;
+    private String mSortOrder;
 
     private static final int MOVIE_LOADER_ID = 0;
 
@@ -73,6 +74,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
+        mSortOrder = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.pref_order_key),getString(R.string.pref_order_default));
         new fetchMovieDataAsyncTask().execute();
         updateMovies();
     }
@@ -103,6 +105,19 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onStart() {
         super.onStart();
         updateMovies();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        String sortOrder = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.pref_order_key),getString(R.string.pref_order_default));
+        if (!mSortOrder.equals(sortOrder)) {
+            mSortOrder=sortOrder;
+            //getLoaderManager().getLoader(MOVIE_LOADER_ID).reset();
+            //updateMovies();
+            LoaderManager loaderManager = this.getLoaderManager();
+            loaderManager.restartLoader(MOVIE_LOADER_ID, null, this);
+        }
     }
 
     @Override
