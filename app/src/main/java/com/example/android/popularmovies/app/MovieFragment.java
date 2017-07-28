@@ -1,5 +1,6 @@
 package com.example.android.popularmovies.app;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.popularmovies.app.data.MovieContract;
+import com.example.android.popularmovies.app.utilities.NetworkUtils;
 
 public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -36,7 +38,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onCreate(Bundle savedInstanceState){
 
         super.onCreate(savedInstanceState);
-        updateMovie();
+        updateMovies();
     }
 
     @Override
@@ -53,7 +55,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         return rootView;
     }
 
-    private void updateMovie() {
+    private void updateMovies() {
         int loaderId = MOVIE_LOADER_ID;
 
         LoaderManager loaderManager = this.getLoaderManager();
@@ -64,7 +66,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onStart() {
         super.onStart();
-        updateMovie();
+        updateMovies();
     }
 
     @Override
@@ -72,8 +74,11 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         switch (loaderId){
             case MOVIE_LOADER_ID:
+                ContentValues[] contentValues = NetworkUtils.fetchMovieData(getContext());
+                getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,contentValues);
+
                 Uri movieQueryUri = MovieContract.MovieEntry.CONTENT_URI;
-                String sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + "DESC";
+                String sortOrder = MovieContract.MovieEntry.COLUMN_POPULARITY + " DESC";
 
                 return new CursorLoader(getContext(),
                         movieQueryUri,

@@ -3,6 +3,8 @@ package com.example.android.popularmovies.app;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.android.popularmovies.app.data.MovieContract;
-import com.squareup.picasso.Picasso;
 
 /**
  * Created by Manolo on 18/07/2017.
@@ -45,12 +46,15 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         //int nameColumnIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER);
         //Picasso.with(holder.moviePoster.getContext()).load(mCursor.getString(nameColumnIndex)).into(holder.moviePoster);
-        Picasso.with(holder.moviePoster.getContext()).load(mCursor.getString(MovieFragment.INDEX_MOVIE_POSTER_PATH)).into(holder.moviePoster);
+        //Picasso.with(holder.moviePoster.getContext()).load(mCursor.getString(MovieFragment.INDEX_MOVIE_POSTER_PATH)).into(holder.moviePoster);
+        byte[] imageByteArray= mCursor.getBlob(MovieFragment.INDEX_MOVIE_POSTER_PATH);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
+        holder.moviePoster.setImageBitmap(bitmap);
     }
 
     @Override
     public int getItemCount() {
-        return mCursor.getCount();
+        return (mCursor == null) ? 0 : mCursor.getCount();
     }
 
     void swapCursor(Cursor newCursor){

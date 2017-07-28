@@ -23,13 +23,13 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 MovieContract.MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 MovieContract.MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                 MovieContract.MovieEntry.COLUMN_TMDB_ID + " TEXT NOT NULL, " +
-                MovieContract.MovieEntry.COLUMN_MOVIE_POSTER + "BLOB NOT NULL, " +
+                MovieContract.MovieEntry.COLUMN_MOVIE_POSTER + " BLOB NOT NULL, " +
                 MovieContract.MovieEntry.COLUMN_SYNOPSIS + " TEXT NOT NULL, " +
                 MovieContract.MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
                 MovieContract.MovieEntry.COLUMN_POPULARITY + " REAL NOT NULL, " +
                 MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE + " REAL NOT NULL, " +
-                MovieContract.MovieEntry.COLUMN_FAVORITE + " INTEGER NOT NULL," +
-                " UNIQUE (" + MovieContract.MovieEntry.COLUMN_TMDB_ID + ") ON CONFLICT REPLACE);";
+                MovieContract.MovieEntry.COLUMN_FAVORITE + " INTEGER NOT NULL, " +
+                "UNIQUE (" + MovieContract.MovieEntry.COLUMN_TMDB_ID + ") ON CONFLICT REPLACE);";
 
         sqliteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
     }
