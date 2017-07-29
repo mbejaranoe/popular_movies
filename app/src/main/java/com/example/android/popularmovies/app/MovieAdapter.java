@@ -44,9 +44,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         mCursor.moveToPosition(position);
 
-        //int nameColumnIndex = mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER);
-        //Picasso.with(holder.moviePoster.getContext()).load(mCursor.getString(nameColumnIndex)).into(holder.moviePoster);
-        //Picasso.with(holder.moviePoster.getContext()).load(mCursor.getString(MovieFragment.INDEX_MOVIE_POSTER_PATH)).into(holder.moviePoster);
         byte[] imageByteArray= mCursor.getBlob(MovieFragment.INDEX_MOVIE_POSTER_PATH);
         Bitmap bitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
         holder.moviePoster.setImageBitmap(bitmap);
@@ -64,11 +61,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
     public class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView moviePoster;
+        private String tmdbId;
 
         public MovieAdapterViewHolder(View view){
             super(view);
 
             moviePoster = (ImageView) view.findViewById(R.id.grid_item_movie_imageview);
+            tmdbId = null;
 
             view.setOnClickListener(this);
         }
@@ -78,10 +77,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
             Intent intent = new Intent(view.getContext(), DetailActivity.class);
             int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
-            int id = mCursor.getInt(mCursor.getColumnIndex(MovieContract.MovieEntry._ID));
-            intent.putExtra("movie", id);
+            String tmdbId = mCursor.getString(mCursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_TMDB_ID));
+            intent.putExtra("movie", tmdbId);
             view.getContext().startActivity(intent);
-
         }
     }
 }

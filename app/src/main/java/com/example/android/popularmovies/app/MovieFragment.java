@@ -36,9 +36,10 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private static final int MOVIE_LOADER_ID = 0;
 
-    public static final String[] FRAGMENT_MOVIE_PROJECTION = {MovieContract.MovieEntry.COLUMN_MOVIE_POSTER};
+    public static final String[] FRAGMENT_MOVIE_PROJECTION = {MovieContract.MovieEntry.COLUMN_TMDB_ID, MovieContract.MovieEntry.COLUMN_MOVIE_POSTER};
 
-    public static final int INDEX_MOVIE_POSTER_PATH = 0;
+    public static final int INDEX_MOVIE_TMDB_ID = 0;
+    public static final int INDEX_MOVIE_POSTER_PATH = 1;
 
     public MovieFragment(){
     }
@@ -113,8 +114,6 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         String sortOrder = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.pref_order_key),getString(R.string.pref_order_default));
         if (!mSortOrder.equals(sortOrder)) {
             mSortOrder=sortOrder;
-            //getLoaderManager().getLoader(MOVIE_LOADER_ID).reset();
-            //updateMovies();
             LoaderManager loaderManager = this.getLoaderManager();
             loaderManager.restartLoader(MOVIE_LOADER_ID, null, this);
         }
