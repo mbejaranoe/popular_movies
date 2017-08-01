@@ -20,14 +20,13 @@ import android.view.ViewGroup;
 
 import com.example.android.popularmovies.app.data.MovieContract;
 import com.example.android.popularmovies.app.utilities.NetworkUtils;
+import com.example.android.popularmovies.app.utilities.TMDBJsonUtils;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 
 public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-
-    private static final String LOG_TAG = MovieFragment.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private GridLayoutManager mGridLayoutManager;
@@ -50,19 +49,23 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         protected ContentValues[] doInBackground(Void... voids) {
             String movieInfoJsonStr;
 
+            /* Obtain String containing movie info in Json */
             try {
                 movieInfoJsonStr = NetworkUtils.getResponseFromHttpUrl(NetworkUtils.getURL(getContext()));
             } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);
                 return null;
             }
+
+            /* Obtain ContentValues[], each one contains movie info from one item (movie) */
             ContentValues[] result = null;
             try {
-                result = NetworkUtils.getMovieInfoFromJson(movieInfoJsonStr);
+                result = TMDBJsonUtils.getMovieInfoFromJson(movieInfoJsonStr);
             } catch (JSONException e) {
                 Log.e("NetworkUtils", e.getMessage(), e);
                 e.printStackTrace();
             }
+
             return result;
         }
 

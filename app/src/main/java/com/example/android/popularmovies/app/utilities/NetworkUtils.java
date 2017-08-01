@@ -1,6 +1,5 @@
 package com.example.android.popularmovies.app.utilities;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,11 +10,6 @@ import android.util.Log;
 
 import com.example.android.popularmovies.app.BuildConfig;
 import com.example.android.popularmovies.app.R;
-import com.example.android.popularmovies.app.data.MovieContract;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -101,35 +95,4 @@ public final class NetworkUtils {
         byte[] byteArray = stream.toByteArray();
         return byteArray;
     }
-
-    public static ContentValues[] getMovieInfoFromJson(String movieInfoJsonStr) throws JSONException {
-        final String TMDB_RESULTS = "results";
-        final String TMDB_TITLE = "title";
-        final String TMDB_ID = "id";
-        final String baseUrl = "http://image.tmdb.org/t/p/w185/";
-        final String TMDB_POSTER = "poster_path";
-        final String TMDB_SYNOPSIS = "overview";
-        final String TMDB_RELEASE_DATE = "release_date";
-        final String TMDB_POPULARITY = "popularity";
-        final String TMDB_VOTE_AVERAGE = "vote_average";
-        JSONObject movieJson = new JSONObject(movieInfoJsonStr);
-        JSONArray resultsArray = movieJson.getJSONArray(TMDB_RESULTS);
-        ContentValues[] resultStr = new ContentValues[resultsArray.length()];
-
-        for (int i = 0; i < resultsArray.length(); i++) {
-            resultStr[i] = new ContentValues();
-            resultStr[i].put(MovieContract.MovieEntry.COLUMN_TITLE, resultsArray.getJSONObject(i).getString(TMDB_TITLE));
-            resultStr[i].put(MovieContract.MovieEntry.COLUMN_TMDB_ID, resultsArray.getJSONObject(i).getString(TMDB_ID));
-            byte[] poster = NetworkUtils.getImageFromURL(baseUrl+resultsArray.getJSONObject(i).getString(TMDB_POSTER));
-            resultStr[i].put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER, poster);
-            resultStr[i].put(MovieContract.MovieEntry.COLUMN_SYNOPSIS, resultsArray.getJSONObject(i).getString(TMDB_SYNOPSIS));
-            resultStr[i].put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, resultsArray.getJSONObject(i).getString(TMDB_RELEASE_DATE));
-            resultStr[i].put(MovieContract.MovieEntry.COLUMN_POPULARITY, resultsArray.getJSONObject(i).getLong(TMDB_POPULARITY));
-            resultStr[i].put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, resultsArray.getJSONObject(i).getLong(TMDB_VOTE_AVERAGE));
-            resultStr[i].put(MovieContract.MovieEntry.COLUMN_FAVORITE, 0);
-        }
-
-        return resultStr;
-    }
-
 }
