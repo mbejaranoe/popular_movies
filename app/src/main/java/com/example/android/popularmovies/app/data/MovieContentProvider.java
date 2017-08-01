@@ -109,15 +109,11 @@ public class MovieContentProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
 
         switch (match){
-            case MOVIES_WITH_ID:
-                String id = uri.getPathSegments().get(1);
-                String mSelection = "_id=?";
-                String[] mSelectionArgs = new String[]{id};
-
+            case MOVIES:
                 moviesUpdated = db.update(MovieContract.MovieEntry.TABLE_NAME,
                         contentValues,
-                        mSelection,
-                        mSelectionArgs);
+                        selection,
+                        selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
@@ -173,7 +169,6 @@ public class MovieContentProvider extends ContentProvider {
             default:
                 return super.bulkInsert(uri, values);
         }
-
     }
 
     @Override

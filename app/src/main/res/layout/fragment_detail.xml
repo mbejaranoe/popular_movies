@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.android.popularmovies.app.DetailActivity$DetailFragment"
     android:layout_width="match_parent"
@@ -57,6 +58,23 @@
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:scrollbars="vertical"
             android:text="@string/synopsis_text" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/addFavorite_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/synopsis_textView"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/synopsis_textView"
+            android:layout_marginBottom="14dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@color/colorPrimaryLight"
+            android:clickable="true"
+            app:backgroundTint="@color/colorPrimaryLight"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_empty_heart"
+            android:onClick="onClickSetFavorite"/>
 
     </RelativeLayout>
 </ScrollView>

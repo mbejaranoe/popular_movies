@@ -1,10 +1,13 @@
 package com.example.android.popularmovies.app;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -19,20 +22,32 @@ import com.example.android.popularmovies.app.data.MovieContract;
 
 public class DetailActivity extends ActionBarActivity {
 
-    public static final String[] DETAIL_MOVIE_PROJECTION = {MovieContract.MovieEntry.COLUMN_TITLE,
-            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+    public static final String[] DETAIL_MOVIE_PROJECTION = {
+            MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_TMDB_ID,
             MovieContract.MovieEntry.COLUMN_MOVIE_POSTER,
-            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
             MovieContract.MovieEntry.COLUMN_SYNOPSIS,
-            MovieContract.MovieEntry.COLUMN_TMDB_ID
+            MovieContract.MovieEntry.COLUMN_RELEASE_DATE,
+            MovieContract.MovieEntry.COLUMN_POPULARITY,
+            MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,
+            MovieContract.MovieEntry.COLUMN_FAVORITE
         };
 
-    public static final int INDEX_TITLE = 0;
-    public static final int INDEX_RELEASE_DATE = 1;
-    public static final int INDEX_MOVIE_POSTER = 2;
-    public static final int INDEX_VOTE_AVERAGE = 3;
+    public static final int INDEX_ID = 0;
+    public static final int INDEX_TITLE = 1;
+    public static final int INDEX_TMDB_ID = 2;
+    public static final int INDEX_MOVIE_POSTER = 3;
     public static final int INDEX_SYNOPSIS = 4;
-    public static final int INDEX_TMDB_ID = 5;
+    public static final int INDEX_RELEASE_DATE = 5;
+    public static final int INDEX_POPULARITY = 6;
+    public static final int INDEX_VOTE_AVERAGE = 7;
+    public static final int INDEX_FAVORITE = 8;
+
+    public static ContentValues mMovieDetails;
+    public static int mMarkedFavorite;
+    public static FloatingActionButton mFab;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +77,32 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void onClickSetFavorite(View view) {
+
+        if (mMarkedFavorite > 0) {
+            mMarkedFavorite = 0;
+        } else {
+            mMarkedFavorite = 1;
+        }
+
+        mMovieDetails.put(MovieContract.MovieEntry.COLUMN_FAVORITE,mMarkedFavorite);
+        String selection = MovieContract.MovieEntry._ID + "=?";
+        String[] selectionArgs = new String[]{String.valueOf(mMovieDetails.getAsInteger(MovieContract.MovieEntry._ID))};
+        Uri uri = MovieContract.MovieEntry.CONTENT_URI;
+
+        getContentResolver().update(uri,
+                mMovieDetails,
+                selection,
+                selectionArgs
+        );
+
+        if (mMarkedFavorite > 0) {
+            mFab.setImageResource(R.drawable.ic_empty_heart);
+        } else {
+            mFab.setImageResource(R.drawable.ic_filled_heart);
+        }
+    }
+
     public static class DetailFragment extends Fragment {
 
         public DetailFragment() {
@@ -73,6 +114,9 @@ public class DetailActivity extends ActionBarActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
             Intent intent = getActivity().getIntent();
+            mFab = (FloatingActionButton) rootView.findViewById(R.id.addFavorite_fab);
+            mMovieDetails = new ContentValues();
+
             if (intent != null && intent.hasExtra("movie")) {
                 String tmdbId = intent.getStringExtra("movie");
                 Cursor cursor;
@@ -96,6 +140,23 @@ public class DetailActivity extends ActionBarActivity {
                 img.setImageBitmap(bitmap);
                 ((TextView) rootView.findViewById(R.id.vote_Average_textView)).setText("Vote average: " + String.valueOf(cursor.getLong(INDEX_VOTE_AVERAGE)));
                 ((TextView) rootView.findViewById(R.id.synopsis_textView)).setText(cursor.getString(INDEX_SYNOPSIS));
+
+                mMovieDetails.put(MovieContract.MovieEntry._ID,cursor.getInt(INDEX_ID));
+                mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TITLE,cursor.getString(INDEX_TITLE));
+                mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TMDB_ID,cursor.getString(INDEX_TMDB_ID));
+                mMovieDetails.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER,cursor.getBlob(INDEX_MOVIE_POSTER));
+                mMovieDetails.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS,cursor.getString(INDEX_SYNOPSIS));
+                mMovieDetails.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,cursor.getString(INDEX_RELEASE_DATE));
+                mMovieDetails.put(MovieContract.MovieEntry.COLUMN_POPULARITY,cursor.getLong(INDEX_POPULARITY));
+                mMovieDetails.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,cursor.getLong(INDEX_VOTE_AVERAGE));
+                mMovieDetails.put(MovieContract.MovieEntry.COLUMN_FAVORITE,cursor.getInt(INDEX_FAVORITE));
+                mMarkedFavorite = cursor.getInt(INDEX_FAVORITE);
+
+                if (mMarkedFavorite > 0) {
+                    mFab.setImageResource(R.drawable.ic_empty_heart);
+                } else {
+                    mFab.setImageResource(R.drawable.ic_filled_heart);
+                }
             }
             return rootView;
         }
