@@ -19,8 +19,6 @@ import com.example.android.popularmovies.app.data.MovieContract;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
 
-    private static final String TAG = MovieAdapter.class.getSimpleName();
-
     private Cursor mCursor;
 
     public MovieAdapter (){
@@ -44,9 +42,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
 
         mCursor.moveToPosition(position);
 
-        byte[] imageByteArray= mCursor.getBlob(MovieFragment.INDEX_MOVIE_POSTER_PATH);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.length);
-        holder.moviePoster.setImageBitmap(bitmap);
+        byte[] imageByteArrayPoster= mCursor.getBlob(MovieFragment.INDEX_MOVIE_POSTER_PATH);
+        Bitmap bitmapPoster = BitmapFactory.decodeByteArray(imageByteArrayPoster, 0, imageByteArrayPoster.length);
+        holder.moviePoster.setImageBitmap(bitmapPoster);
     }
 
     @Override

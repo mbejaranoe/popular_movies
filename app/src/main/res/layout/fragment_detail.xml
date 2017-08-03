@@ -6,66 +6,92 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" >
+    android:paddingBottom="@dimen/activity_vertical_margin">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/poster_ImageView"
-            android:layout_width="wrap_content"
+            android:id="@+id/backdrop_ImageView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="@dimen/activity_horizontal_margin" />
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/minions_backdrop" />
 
-        <TextView
-            android:id="@+id/title_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_toRightOf="@id/poster_ImageView"
-            android:text="@string/title_text" />
-
-        <TextView
-            android:id="@+id/date_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title_textView"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_toRightOf="@id/poster_ImageView"
-            android:text="@string/date_text" />
-
-        <TextView
-            android:id="@+id/vote_Average_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/date_textView"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_toRightOf="@id/poster_ImageView"
-            android:text="@string/voteAverage_text" />
-
-        <TextView
-            android:id="@+id/synopsis_textView"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/poster_ImageView"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:scrollbars="vertical"
-            android:text="@string/synopsis_text" />
+            android:layout_height="match_parent"
+            android:layout_margin="8dp">
+
+            <ImageView
+                android:id="@+id/poster_ImageView"
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/minions_poster" />
+
+            <TextView
+                android:id="@+id/title_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:layout_toRightOf="@id/poster_ImageView"
+                tools:text="@string/title_text" />
+
+            <TextView
+                android:id="@+id/date_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title_textView"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:layout_toRightOf="@id/poster_ImageView"
+                tools:text="@string/date_text" />
+
+            <TextView
+                android:id="@+id/vote_Average_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/date_textView"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:layout_toRightOf="@id/poster_ImageView"
+                tools:text="@string/voteAverage_text" />
+
+            <TextView
+                android:id="@+id/synopsis_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/poster_ImageView"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:scrollbars="vertical"
+                tools:text="@string/synopsis_text" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recyclerview_trailers"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recyclerview_reviews" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/addFavorite_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/synopsis_textView"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/synopsis_textView"
             android:layout_marginBottom="14dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
@@ -76,5 +102,6 @@
             app:srcCompat="@drawable/ic_empty_heart"
             android:onClick="onClickSetFavorite"/>
 
-    </RelativeLayout>
+    </LinearLayout>
+
 </ScrollView>

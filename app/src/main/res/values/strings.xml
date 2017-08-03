@@ -19,4 +19,8 @@
     <string name="synopsis_text">Synopsis</string>
     <string name="title_activity_settings">Settings</string>
 
+    <string name="trailer_label">Trailer</string>
+    <string name="user_textView">Manolo Bejarano</string>
+    <string name="review_textView">Esta película es una bonita idea y la animación y recreación de la ciudad es realmente buena, pero eso es todo. El guión es aburrido y los chistes realmente no tienen gracia.</string>
+
 </resources>

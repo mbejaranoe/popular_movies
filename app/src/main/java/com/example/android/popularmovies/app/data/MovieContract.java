@@ -40,6 +40,9 @@ public class MovieContract {
         /* The movie poster. It will be stored as a BLOB in the database*/
         public static final String COLUMN_MOVIE_POSTER = "moviePoster";
 
+        /* The backdrop image. It will be stored as a BLOB in the database */
+        public static final String COLUMN_BACKDROP_IMAGE = "backdropImage";
+
         /* The synopsis will be stored as TEXT */
         public static final String COLUMN_SYNOPSIS = "synopsis";
 

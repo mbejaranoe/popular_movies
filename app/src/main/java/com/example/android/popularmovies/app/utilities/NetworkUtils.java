@@ -95,4 +95,34 @@ public final class NetworkUtils {
         byte[] byteArray = stream.toByteArray();
         return byteArray;
     }
+
+    public static URL getTrailersURL(String id){
+        Uri trailersQueryUri = Uri.parse(MOVIE_INFO_BASE_URL + id + "/videos?").buildUpon()
+                .appendQueryParameter(API_KEY_PARAM, BuildConfig.TMDB_API_KEY)
+                .build();
+
+        try {
+            URL trailersQueryUrl = new URL(trailersQueryUri.toString());
+            Log.v(TAG, "URL: " + trailersQueryUrl);
+            return trailersQueryUrl;
+        } catch (MalformedURLException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static URL getReviewsURL(String id){
+        Uri reviewsQueryUri = Uri.parse(MOVIE_INFO_BASE_URL + id + "/reviews?").buildUpon()
+                .appendQueryParameter(API_KEY_PARAM, BuildConfig.TMDB_API_KEY)
+                .build();
+
+        try {
+            URL reviewsQueryUrl = new URL(reviewsQueryUri.toString());
+            Log.v(TAG, "URL: " + reviewsQueryUrl);
+            return reviewsQueryUrl;
+        } catch (MalformedURLException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

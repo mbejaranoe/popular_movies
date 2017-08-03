@@ -74,6 +74,7 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
             getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,cv);
         }
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState){
 
