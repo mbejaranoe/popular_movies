@@ -60,7 +60,6 @@ public class DetailActivity extends ActionBarActivity {
     public static int mMarkedFavorite;
     public static FloatingActionButton mFab;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,7 +130,9 @@ public class DetailActivity extends ActionBarActivity {
 
         @Override
         public void OnFetchMovieTrailerTaskCompleted(ContentValues[] contentValues) {
+
             mTrailerAdapter = new TrailerAdapter(contentValues);
+
         }
 
         public class FetchMovieTrailersAsyncTask extends AsyncTask<String, Void, ContentValues[]>{
@@ -189,12 +190,18 @@ public class DetailActivity extends ActionBarActivity {
             LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
             mRecyclerview.setLayoutManager(layoutManager);
             mRecyclerview.setHasFixedSize(true);
-            mTrailerAdapter = new TrailerAdapter();
+            FetchMovieTrailersAsyncTask fetchMovieTrailersAsyncTask = new FetchMovieTrailersAsyncTask(this);
+            /*
             mRecyclerview.setAdapter(mTrailerAdapter);
+             */
             /* esto es añadido*/
 
             if (intent != null && intent.hasExtra("movie")) {
                 String tmdbId = intent.getStringExtra("movie");
+
+                fetchMovieTrailersAsyncTask.execute(tmdbId);
+                mRecyclerview.setAdapter(mTrailerAdapter);
+
                 Cursor cursor;
                 String[] projection = DETAIL_MOVIE_PROJECTION;
                 String selection = MovieContract.MovieEntry.COLUMN_TMDB_ID + "=?";

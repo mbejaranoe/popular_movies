@@ -60,7 +60,8 @@ public final class TMDBJsonUtils {
         int numTrailers = 0;
 
         for (int i = 0; i < resultsArray.length(); i++) {
-            if (resultsArray.getJSONObject(i).get(TMDB_TYPE) == "Trailer"){
+            String type = resultsArray.getJSONObject(i).get(TMDB_TYPE).toString();
+            if (type.equals("Trailer")){
                 numTrailers++;
             }
         }
@@ -69,9 +70,13 @@ public final class TMDBJsonUtils {
 
         int trailersCount = 0;
         for (int i = 0; i < resultsArray.length(); i++){
-            if (resultsArray.getJSONObject(i).get(TMDB_TYPE) == "Trailer"){
-                trailers[trailersCount].put(KEY_URL, baseUrl + resultsArray.getJSONObject(i).getString(TMDB_KEY));
-                trailers[trailersCount].put(KEY_NAME, resultsArray.getJSONObject(i).getString(TMDB_NAME));
+            String type = resultsArray.getJSONObject(i).get(TMDB_TYPE).toString();
+            if (type.equals("Trailer")){
+                String url = String.valueOf(baseUrl + resultsArray.getJSONObject(i).getString(TMDB_KEY));
+                String name = String.valueOf(resultsArray.getJSONObject(i).getString(TMDB_NAME));
+                trailers[trailersCount] = new ContentValues();
+                trailers[trailersCount].put(KEY_URL, url);
+                trailers[trailersCount].put(KEY_NAME, name);
                 trailersCount++;
             }
         }
