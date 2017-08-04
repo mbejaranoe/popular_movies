@@ -100,8 +100,11 @@ public final class TMDBJsonUtils {
         ContentValues[] reviews = new ContentValues[numReviews];
 
         for (int i = 0; i < resultsArray.length(); i++){
-            reviews[i].put(KEY_URL, resultsArray.getJSONObject(i).getString(TMDB_REVIEW_URL));
-            reviews[i].put(KEY_AUTHOR, resultsArray.getJSONObject(i).getString(TMDB_AUTHOR));
+            reviews[i] = new ContentValues();
+            String url = resultsArray.getJSONObject(i).getString(TMDB_REVIEW_URL).toString();
+            String author = resultsArray.getJSONObject(i).getString(TMDB_AUTHOR).toString();
+            reviews[i].put(KEY_URL, url);
+            reviews[i].put(KEY_AUTHOR, author);
         }
 
         return reviews;

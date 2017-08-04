@@ -14,6 +14,7 @@
         android:textColor="@color/colorPrimaryDark"
         tools:text="@string/user_textView" />
 
+    <!--
     <TextView
         android:id="@+id/review_textView"
         android:layout_width="match_parent"
@@ -25,5 +26,6 @@
         android:layout_gravity="start"
         android:textColor="@color/colorPrimary"
         tools:text="@string/review_textView" />
+    -->
 
 </LinearLayout>
