@@ -50,7 +50,7 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
     public void OnFetchMovieTrailerTaskCompleted(ContentValues[] contentValues) {
 
         mTrailerAdapter = new TrailerAdapter(contentValues);
-
+        mRecyclerview.setAdapter(mTrailerAdapter);
     }
 
     @Override
@@ -62,16 +62,11 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
         mFab = (FloatingActionButton) rootView.findViewById(R.id.addFavorite_fab);
         mMovieDetails = new ContentValues();
 
-            /* esto es añadido */
         mRecyclerview = (RecyclerView) rootView.findViewById(R.id.recyclerview_trailers);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerview.setLayoutManager(layoutManager);
         mRecyclerview.setHasFixedSize(true);
         FetchMovieTrailersAsyncTask fetchMovieTrailersAsyncTask = new FetchMovieTrailersAsyncTask(this);
-            /*
-            mRecyclerview.setAdapter(mTrailerAdapter);
-             */
-            /* esto es añadido*/
 
         if (intent != null && intent.hasExtra("movie")) {
             String tmdbId = intent.getStringExtra("movie");
@@ -131,32 +126,4 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
         }
         return rootView;
     }
-
-    /*
-    public void onClickSetFavorite(View view) {
-
-        if (mMarkedFavorite > 0) {
-            mMarkedFavorite = 0;
-        } else {
-            mMarkedFavorite = 1;
-        }
-
-        mMovieDetails.put(MovieContract.MovieEntry.COLUMN_FAVORITE,mMarkedFavorite);
-        String selection = MovieContract.MovieEntry._ID + "=?";
-        String[] selectionArgs = new String[]{String.valueOf(mMovieDetails.getAsInteger(MovieContract.MovieEntry._ID))};
-        Uri uri = MovieContract.MovieEntry.CONTENT_URI;
-
-        getContext().getContentResolver().update(uri,
-                mMovieDetails,
-                selection,
-                selectionArgs
-        );
-
-        if (mMarkedFavorite > 0) {
-            mFab.setImageResource(R.drawable.ic_empty_heart);
-        } else {
-            mFab.setImageResource(R.drawable.ic_filled_heart);
-        }
-    }
-    */
 }

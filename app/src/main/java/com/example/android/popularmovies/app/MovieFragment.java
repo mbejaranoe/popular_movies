@@ -80,7 +80,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         super.onCreate(savedInstanceState);
         mSortOrder = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.pref_order_key),getString(R.string.pref_order_default));
-        new fetchMovieDataAsyncTask().execute();
+        if (!mSortOrder.equals(getString(R.string.pref_order_favorite))) {
+            new fetchMovieDataAsyncTask().execute();
+        }
         updateMovies();
     }
 

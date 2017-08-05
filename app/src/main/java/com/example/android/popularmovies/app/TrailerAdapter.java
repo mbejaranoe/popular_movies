@@ -16,7 +16,7 @@ import android.widget.TextView;
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder> {
 
     private ContentValues[] trailers;
-    private final int KEY_TAG = 0;
+    //private final int KEY_TAG = 0;
 
     public TrailerAdapter(ContentValues[] contentValues){
         trailers = contentValues;
@@ -42,7 +42,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         ContentValues trailer = trailers[position];
 
         holder.trailerLabelTextView.setText(trailer.getAsString("name"));
-        holder.itemView.setTag(KEY_TAG, trailer.getAsString("key"));
+//        holder.itemView.setTag(KEY_TAG, trailer.getAsString("key"));
     }
 
     @Override
