@@ -2,6 +2,8 @@ package com.example.android.popularmovies.app;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +18,8 @@ import android.widget.TextView;
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerAdapterViewHolder> {
 
     private ContentValues[] trailers;
-    //private final int KEY_TAG = 0;
 
-    public TrailerAdapter(ContentValues[] contentValues){
+    public TrailerAdapter(ContentValues[] contentValues) {
         trailers = contentValues;
     }
 
@@ -42,7 +43,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         ContentValues trailer = trailers[position];
 
         holder.trailerLabelTextView.setText(trailer.getAsString("name"));
-//        holder.itemView.setTag(KEY_TAG, trailer.getAsString("key"));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
         return trailers.length;
     }
 
-    public class TrailerAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class TrailerAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageButton playTrailerButton;
         TextView trailerLabelTextView;
 
@@ -65,12 +65,15 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerA
 
         @Override
         public void onClick(View view) {
-            // use an Intent to launch the trailer
-            /*
-            Intent intent = new Intent(view.getContext(), DetailActivity.class);
             int adapterPosition = getAdapterPosition();
-            String trailerUrl = trailersUrl[adapterPosition];
-            */
+            String url = trailers[adapterPosition].get("url").toString();
+            Uri webpage = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+            intent.putExtra("url", url);
+
+            if (intent.resolveActivity(view.getContext().getPackageManager()) != null) {
+                view.getContext().startActivity(intent);
+            }
         }
     }
 }

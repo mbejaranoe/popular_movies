@@ -6,13 +6,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,7 +41,7 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
 
     public static ContentValues mMovieDetails;
     public static int mMarkedFavorite;
-    public static FloatingActionButton mFab;
+    public static ImageButton mFab;
 
     public DetailFragment() {
     }
@@ -59,7 +59,7 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         Intent intent = getActivity().getIntent();
-        mFab = (FloatingActionButton) rootView.findViewById(R.id.addFavorite_fab);
+        mFab = (ImageButton) rootView.findViewById(R.id.addFavorite_button);
         mMovieDetails = new ContentValues();
 
         mRecyclerview = (RecyclerView) rootView.findViewById(R.id.recyclerview_trailers);

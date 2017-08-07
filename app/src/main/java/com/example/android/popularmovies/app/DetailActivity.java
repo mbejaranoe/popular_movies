@@ -100,5 +100,4 @@ public class DetailActivity extends ActionBarActivity {
             mFab.setImageResource(R.drawable.ic_filled_heart);
         }
     }
-
 }
