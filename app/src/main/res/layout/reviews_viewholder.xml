@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="24dp">
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/user_textView"
@@ -14,7 +13,6 @@
         android:textColor="@color/colorPrimaryDark"
         tools:text="@string/user_textView" />
 
-    <!--
     <TextView
         android:id="@+id/review_textView"
         android:layout_width="match_parent"
@@ -26,6 +24,5 @@
         android:layout_gravity="start"
         android:textColor="@color/colorPrimary"
         tools:text="@string/review_textView" />
-    -->
 
 </LinearLayout>

@@ -3,8 +3,6 @@ package com.example.android.popularmovies.app;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.android.popularmovies.app.data.MovieContract;
 
@@ -34,9 +30,9 @@ import static com.example.android.popularmovies.app.DetailActivity.INDEX_VOTE_AV
  * Created by Manolo on 04/08/2017.
  */
 
-public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskCompleted{
+public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskCompleted, OnFetchMovieReviewTaskCompleted {
 
-    private TrailerAdapter mTrailerAdapter;
+    private DetailsAdapter mDetailsAdapter;
     private RecyclerView mRecyclerview;
 
     public static ContentValues mMovieDetails;
@@ -49,8 +45,15 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
     @Override
     public void OnFetchMovieTrailerTaskCompleted(ContentValues[] contentValues) {
 
-        mTrailerAdapter = new TrailerAdapter(contentValues);
-        mRecyclerview.setAdapter(mTrailerAdapter);
+        mDetailsAdapter.setTrailers(contentValues);
+        mRecyclerview.setAdapter(mDetailsAdapter);
+    }
+
+    @Override
+    public void OnFetchMovieReviewTaskCompleted(ContentValues[] contentValues) {
+
+        mDetailsAdapter.setReviews(contentValues);
+        mRecyclerview.setAdapter(mDetailsAdapter);
     }
 
     @Override
@@ -59,20 +62,18 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         Intent intent = getActivity().getIntent();
-        mFab = (ImageButton) rootView.findViewById(R.id.addFavorite_button);
         mMovieDetails = new ContentValues();
+        mDetailsAdapter = new DetailsAdapter();
 
-        mRecyclerview = (RecyclerView) rootView.findViewById(R.id.recyclerview_trailers);
+        mRecyclerview = (RecyclerView) rootView.findViewById(R.id.recyclerview_details);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerview.setLayoutManager(layoutManager);
         mRecyclerview.setHasFixedSize(true);
         FetchMovieTrailersAsyncTask fetchMovieTrailersAsyncTask = new FetchMovieTrailersAsyncTask(this);
+        FetchMovieReviewsAsyncTask fetchMovieReviewsAsyncTask = new FetchMovieReviewsAsyncTask(this);
 
         if (intent != null && intent.hasExtra("movie")) {
             String tmdbId = intent.getStringExtra("movie");
-
-            fetchMovieTrailersAsyncTask.execute(tmdbId);
-            mRecyclerview.setAdapter(mTrailerAdapter);
 
             Cursor cursor;
             String[] projection = DETAIL_MOVIE_PROJECTION;
@@ -88,6 +89,7 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
 
             cursor.moveToFirst();
 
+            /*
             ImageView imgBackdrop = (ImageView) rootView.findViewById(R.id.backdrop_ImageView);
             byte[] imageByteArrayBackdrop= cursor.getBlob(INDEX_BACKDROP_IMAGE);
             Bitmap bitmapBackdrop = BitmapFactory.decodeByteArray(imageByteArrayBackdrop, 0, imageByteArrayBackdrop.length);
@@ -105,6 +107,7 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
             ((TextView) rootView.findViewById(R.id.vote_Average_textView)).setText(String.valueOf(cursor.getLong(INDEX_VOTE_AVERAGE)));
 
             ((TextView) rootView.findViewById(R.id.synopsis_textView)).setText(cursor.getString(INDEX_SYNOPSIS));
+            */
 
             mMovieDetails.put(MovieContract.MovieEntry._ID,cursor.getInt(INDEX_ID));
             mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TITLE,cursor.getString(INDEX_TITLE));
@@ -116,13 +119,14 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
             mMovieDetails.put(MovieContract.MovieEntry.COLUMN_POPULARITY,cursor.getLong(INDEX_POPULARITY));
             mMovieDetails.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,cursor.getLong(INDEX_VOTE_AVERAGE));
             mMovieDetails.put(MovieContract.MovieEntry.COLUMN_FAVORITE,cursor.getInt(INDEX_FAVORITE));
-            mMarkedFavorite = cursor.getInt(INDEX_FAVORITE);
+            mDetailsAdapter.setMovieDetails(mMovieDetails);
 
-            if (mMarkedFavorite > 0) {
-                mFab.setImageResource(R.drawable.ic_empty_heart);
-            } else {
-                mFab.setImageResource(R.drawable.ic_filled_heart);
-            }
+            fetchMovieTrailersAsyncTask.execute(tmdbId);
+            fetchMovieReviewsAsyncTask.execute(tmdbId);
+
+            mRecyclerview.setAdapter(mDetailsAdapter);
+
+            mMarkedFavorite = cursor.getInt(INDEX_FAVORITE);
         }
         return rootView;
     }

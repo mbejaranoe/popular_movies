@@ -30,17 +30,16 @@ public class FetchMovieReviewsAsyncTask extends AsyncTask<String, Void, ContentV
 
         /* Obtain String containing reviews info in Json */
         try {
-            reviewsInfoJsonStr = NetworkUtils.getResponseFromHttpUrl(NetworkUtils.getTrailersURL(id));
+            reviewsInfoJsonStr = NetworkUtils.getResponseFromHttpUrl(NetworkUtils.getReviewsURL(id));
         } catch (IOException e){
             Log.e("DetailFragment", "Error: ", e);
             return null;
         }
 
-
         /* Obtain ContentValues[], each one contains review info from one item (review) */
         ContentValues[] reviews = null;
         try {
-            reviews = TMDBJsonUtils.getMovieTrailersFromJson(reviewsInfoJsonStr);
+            reviews = TMDBJsonUtils.getMovieReviewsFromJson(reviewsInfoJsonStr);
         } catch (JSONException e) {
             Log.e("DetailFragment", "Error: ", e);
             return null;

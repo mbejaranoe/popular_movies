@@ -1,6 +1,5 @@
 package com.example.android.popularmovies.app;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,10 +7,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.example.android.popularmovies.app.data.MovieContract;
 
-import static com.example.android.popularmovies.app.DetailFragment.mFab;
 import static com.example.android.popularmovies.app.DetailFragment.mMarkedFavorite;
 import static com.example.android.popularmovies.app.DetailFragment.mMovieDetails;
 
@@ -69,13 +68,14 @@ public class DetailActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public interface OnFetchMovieTrailerTaskCompleted {
-
-        void OnFetchMovieTrailerTaskCompleted(ContentValues[] contentValues);
-
-    }
-
     public void onClickSetFavorite(View view) {
+
+        ImageButton mFab = (ImageButton) findViewById(R.id.addFavorite_button);
+        if (mMarkedFavorite > 0) {
+            mFab.setImageResource(R.drawable.ic_empty_heart);
+        } else {
+            mFab.setImageResource(R.drawable.ic_filled_heart);
+        }
 
         if (mMarkedFavorite > 0) {
             mMarkedFavorite = 0;
@@ -93,11 +93,5 @@ public class DetailActivity extends ActionBarActivity {
                 selection,
                 selectionArgs
         );
-
-        if (mMarkedFavorite > 0) {
-            mFab.setImageResource(R.drawable.ic_empty_heart);
-        } else {
-            mFab.setImageResource(R.drawable.ic_filled_heart);
-        }
     }
 }

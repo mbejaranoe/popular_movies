@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/backdrop_ImageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/minions_backdrop" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp">
+
+        <ImageView
+            android:id="@+id/poster_ImageView"
+            android:layout_width="96dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="16dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/minions_poster" />
+
+        <TextView
+            android:id="@+id/title_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_toRightOf="@id/poster_ImageView"
+            style="@style/Base.TextAppearance.AppCompat.Title"
+            tools:text="@string/title_text" />
+
+        <TextView
+            android:id="@+id/date_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_textView"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_toRightOf="@id/poster_ImageView"
+            tools:text="@string/date_text" />
+
+        <TextView
+            android:id="@+id/vote_Average_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/date_textView"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:layout_toRightOf="@id/poster_ImageView"
+            tools:text="@string/voteAverage_text" />
+
+        <ImageButton
+            android:id="@+id/addFavorite_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:background="@color/colorPrimaryLight"
+            android:clickable="true"
+            app:srcCompat="@drawable/ic_empty_heart"
+            android:layout_below="@id/vote_Average_textView"
+            android:layout_toRightOf="@id/poster_ImageView"
+            android:onClick="onClickSetFavorite"/>
+
+        <TextView
+            android:id="@+id/synopsis_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/poster_ImageView"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:scrollbars="vertical"
+            tools:text="@string/synopsis_text" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

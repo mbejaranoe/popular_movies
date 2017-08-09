@@ -86,10 +86,10 @@ public final class TMDBJsonUtils {
 
     public static ContentValues[] getMovieReviewsFromJson(String movieInfoJsonStr) throws JSONException {
         final String TMDB_RESULTS = "results";
-        final String TMDB_REVIEW_URL = "url";
+        final String TMDB_REVIEW_CONTENT = "content";
         final String TMDB_NUM_RESULTS = "total_results";
         final String TMDB_AUTHOR = "author";
-        final String KEY_URL = "url";
+        final String KEY_REVIEW = "review";
         final String KEY_AUTHOR = "author";
 
         int numReviews;
@@ -101,9 +101,9 @@ public final class TMDBJsonUtils {
 
         for (int i = 0; i < resultsArray.length(); i++){
             reviews[i] = new ContentValues();
-            String url = resultsArray.getJSONObject(i).getString(TMDB_REVIEW_URL).toString();
+            String review = resultsArray.getJSONObject(i).getString(TMDB_REVIEW_CONTENT).toString();
             String author = resultsArray.getJSONObject(i).getString(TMDB_AUTHOR).toString();
-            reviews[i].put(KEY_URL, url);
+            reviews[i].put(KEY_REVIEW, review);
             reviews[i].put(KEY_AUTHOR, author);
         }
 
