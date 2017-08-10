@@ -4,13 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimaryLight"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"/>
 
     <TextView
         android:id="@+id/user_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        style="@style/Base.TextAppearance.AppCompat.Title"
         tools:text="@string/user_textView" />
 
     <TextView
@@ -20,9 +29,9 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="32dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:textAlignment="textStart"
         android:layout_gravity="start"
-        android:textColor="@color/colorPrimary"
         tools:text="@string/review_textView" />
 
 </LinearLayout>

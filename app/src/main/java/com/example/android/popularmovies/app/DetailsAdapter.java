@@ -17,8 +17,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final int REVIEWS = 2;
 
     private ContentValues movieDetails;
-    private ContentValues[] trailersArray;
-    private ContentValues[] reviewsArray;
+    private ContentValues[] trailersArray = new ContentValues[0];
+    private ContentValues[] reviewsArray = new ContentValues[0];
 
     public void setMovieDetails(ContentValues movieDetails) {
         this.movieDetails = movieDetails;
@@ -34,19 +34,19 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return ((movieDetails == null) ? 0 : 1 ) + ((trailersArray == null) ? 0 : 1) + ((reviewsArray == null) ? 0 : 1);
+        return 1 + trailersArray.length + reviewsArray.length;
     }
 
     @Override
     public int getItemViewType(int position){
+
         if (position == 0){
             return MOVIE_DETAILS;
-        } else if (position == 1) {
+        } else if (position <= trailersArray.length) {
             return TRAILERS;
-        } else if (position == 2) {
+        } else {
             return REVIEWS;
         }
-        return -1;
     }
 
     @Override

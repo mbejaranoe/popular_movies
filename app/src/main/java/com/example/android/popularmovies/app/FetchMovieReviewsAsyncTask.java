@@ -45,7 +45,7 @@ public class FetchMovieReviewsAsyncTask extends AsyncTask<String, Void, ContentV
             return null;
         }
 
-        return  reviews;
+        return reviews;
     }
 
     @Override
