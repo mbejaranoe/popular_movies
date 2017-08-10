@@ -89,26 +89,6 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
 
             cursor.moveToFirst();
 
-            /*
-            ImageView imgBackdrop = (ImageView) rootView.findViewById(R.id.backdrop_ImageView);
-            byte[] imageByteArrayBackdrop= cursor.getBlob(INDEX_BACKDROP_IMAGE);
-            Bitmap bitmapBackdrop = BitmapFactory.decodeByteArray(imageByteArrayBackdrop, 0, imageByteArrayBackdrop.length);
-            imgBackdrop.setImageBitmap(bitmapBackdrop);
-
-            ((TextView) rootView.findViewById(R.id.title_textView)).setText(cursor.getString(INDEX_TITLE));
-
-            ((TextView) rootView.findViewById(R.id.date_textView)).setText(cursor.getString(INDEX_RELEASE_DATE));
-
-            ImageView imgPoster = (ImageView) rootView.findViewById(R.id.poster_ImageView);
-            byte[] imageByteArrayPoster= cursor.getBlob(INDEX_MOVIE_POSTER);
-            Bitmap bitmapPoster = BitmapFactory.decodeByteArray(imageByteArrayPoster, 0, imageByteArrayPoster.length);
-            imgPoster.setImageBitmap(bitmapPoster);
-
-            ((TextView) rootView.findViewById(R.id.vote_Average_textView)).setText(String.valueOf(cursor.getLong(INDEX_VOTE_AVERAGE)));
-
-            ((TextView) rootView.findViewById(R.id.synopsis_textView)).setText(cursor.getString(INDEX_SYNOPSIS));
-            */
-
             mMovieDetails.put(MovieContract.MovieEntry._ID,cursor.getInt(INDEX_ID));
             mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TITLE,cursor.getString(INDEX_TITLE));
             mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TMDB_ID,cursor.getString(INDEX_TMDB_ID));
