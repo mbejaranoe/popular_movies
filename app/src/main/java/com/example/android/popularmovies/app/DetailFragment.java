@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 
 import com.example.android.popularmovies.app.data.MovieContract;
 
@@ -37,7 +36,7 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
 
     public static ContentValues mMovieDetails;
     public static int mMarkedFavorite;
-    public static ImageButton mFab;
+    public static String mTrailerUrl;
 
     public DetailFragment() {
     }
@@ -47,6 +46,7 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
 
         mDetailsAdapter.setTrailers(contentValues);
         mRecyclerview.setAdapter(mDetailsAdapter);
+        mTrailerUrl = contentValues[0].getAsString("url");
     }
 
     @Override

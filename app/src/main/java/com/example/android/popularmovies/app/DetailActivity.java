@@ -54,6 +54,7 @@ public class DetailActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail, menu);
+
         return true;
     }
 
@@ -63,9 +64,19 @@ public class DetailActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if (id == R.id.action_share_trailer) {
+            shareTrailerUrl(DetailFragment.mTrailerUrl);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void shareTrailerUrl(String url){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+        sendIntent.setType("text/html");
+        startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
     }
 
     public void onClickSetFavorite(View view) {
