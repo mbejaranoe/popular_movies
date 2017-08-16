@@ -22,6 +22,12 @@ public class MovieContract {
     /* The path for all the movies */
     public static final String PATH_MOVIES = "movies";
 
+    /* The path for all the trailers */
+    public static final String PATH_TRAILERS = "trailers";
+
+    /* The path for all the reviews */
+    public static final String PATH_REVIEWS = "reviews";
+
     /* Inner class that defines the table contents of the movie table */
     public static final class MovieEntry implements BaseColumns {
 
@@ -57,5 +63,42 @@ public class MovieContract {
 
         /* The favorite indicates wether the movie has been marked as favorite (value integer 1) or not (value integer 0)*/
         public static final String COLUMN_FAVORITE = "favorite";
+    }
+
+    public static final class TrailersEntry implements BaseColumns {
+
+        /* TrailersEntry content URI = base content URI + path */
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRAILERS).build();
+
+        /* Used internally as the name of the trailers table. */
+        public static final String TABLE_NAME = "trailers";
+
+        /* The TMDB id, though it's an integer, we don't have to operate with it, so we will store it as TEXT */
+        public static final String COLUMN_TMDB_ID = "tmdbId";
+
+        /* The URL of the trailer, stored as a String */
+        public static final String COLUMN_URL = "url";
+
+        /* The name of the trailer */
+        public static final String COLUMN_NAME = "name";
+    }
+
+    public static final class ReviewsEntry implements BaseColumns {
+
+        /* ReviewsEntry content URI = base content URI + path */
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEWS).build();
+
+        /* Used internally as the name of the reviews table. */
+        public static final String TABLE_NAME = "reviews";
+
+        /* The TMDB id, though it's an integer, we don't have to operate with it, so we will store it as TEXT */
+        public static final String COLUMN_TMDB_ID = "tmdbId";
+
+        /* The name of the author */
+        public static final String COLUMN_AUTHOR = "author";
+
+        /* The text of the review itself */
+        public static final String COLUMN_REVIEW = "review";
+
     }
 }

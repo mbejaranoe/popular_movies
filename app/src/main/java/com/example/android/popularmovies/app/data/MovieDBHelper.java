@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MovieDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "movie.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public MovieDBHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,12 +32,30 @@ public class MovieDBHelper extends SQLiteOpenHelper {
                 MovieContract.MovieEntry.COLUMN_FAVORITE + " INTEGER NOT NULL, " +
                 "UNIQUE (" + MovieContract.MovieEntry.COLUMN_TMDB_ID + ") ON CONFLICT REPLACE);";
 
+        final String SQL_CREATE_TRAILERS_TABLE = "CREATE TABLE " +
+                MovieContract.TrailersEntry.TABLE_NAME + " (" +
+                MovieContract.TrailersEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieContract.TrailersEntry.COLUMN_TMDB_ID + " TEXT NOT NULL, " +
+                MovieContract.TrailersEntry.COLUMN_URL + " TEXT NOT NULL, " +
+                MovieContract.TrailersEntry.COLUMN_NAME + " TEXT NOT NULL);";
+
+        final String SQL_CREATE_REVIEWS_TABLE = "CREATE TABLE " +
+                MovieContract.ReviewsEntry.TABLE_NAME + " (" +
+                MovieContract.ReviewsEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieContract.ReviewsEntry.COLUMN_TMDB_ID + " TEXT NOT NULL, " +
+                MovieContract.ReviewsEntry.COLUMN_AUTHOR + " TEXT NOT NULL, " +
+                MovieContract.ReviewsEntry.COLUMN_REVIEW + " TEXT NOT NULL);";
+
         sqliteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
+        sqliteDatabase.execSQL(SQL_CREATE_TRAILERS_TABLE);
+        sqliteDatabase.execSQL(SQL_CREATE_REVIEWS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqliteDatabase, int i, int i1){
         sqliteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);
+        sqliteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.TrailersEntry.TABLE_NAME);
+        sqliteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.ReviewsEntry.TABLE_NAME);
         onCreate(sqliteDatabase);
     }
 }

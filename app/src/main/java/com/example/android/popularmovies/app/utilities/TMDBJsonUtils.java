@@ -87,7 +87,6 @@ public final class TMDBJsonUtils {
     public static ContentValues[] getMovieReviewsFromJson(String movieInfoJsonStr) throws JSONException {
         final String TMDB_RESULTS = "results";
         final String TMDB_REVIEW_CONTENT = "content";
-        //final String TMDB_NUM_RESULTS = "total_results";
         final String TMDB_AUTHOR = "author";
         final String KEY_REVIEW = "review";
         final String KEY_AUTHOR = "author";
