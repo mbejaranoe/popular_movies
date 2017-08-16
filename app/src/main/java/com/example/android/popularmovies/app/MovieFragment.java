@@ -1,8 +1,11 @@
 package com.example.android.popularmovies.app;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.app.data.MovieContract;
 import com.example.android.popularmovies.app.utilities.NetworkUtils;
@@ -81,7 +85,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onCreate(savedInstanceState);
         mSortOrder = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.pref_order_key),getString(R.string.pref_order_default));
         if (!mSortOrder.equals(getString(R.string.pref_order_favorite))) {
-            new fetchMovieDataAsyncTask().execute();
+            final ConnectivityManager conMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+            if (activeNetwork != null && activeNetwork.isConnected()) {
+                new fetchMovieDataAsyncTask().execute();
+            } else {
+                // notify user you are not online
+                Toast.makeText(getActivity(), "You are not online!", Toast.LENGTH_LONG).show();
+            }
         }
         updateMovies();
     }

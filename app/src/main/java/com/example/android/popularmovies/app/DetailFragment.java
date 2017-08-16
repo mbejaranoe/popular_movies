@@ -2,8 +2,11 @@ package com.example.android.popularmovies.app;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.android.popularmovies.app.data.MovieContract;
 
@@ -178,7 +182,14 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
                 mRecyclerview.setAdapter(mDetailsAdapter);
                 mTrailerUrl = mTrailers[0].getAsString("url");
             } else {
-                fetchMovieTrailersAsyncTask.execute(tmdbId);
+                ConnectivityManager conMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+                if (activeNetwork != null && activeNetwork.isConnected()) {
+                    fetchMovieTrailersAsyncTask.execute(tmdbId);
+                } else {
+                    // notify user you are not online
+                    Toast.makeText(getActivity(), "You are not online!", Toast.LENGTH_LONG).show();
+                }
             }
 
             projection = REVIEWS_PROJECTION;
@@ -206,7 +217,14 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
                 mDetailsAdapter.setReviews(mReviews);
                 mRecyclerview.setAdapter(mDetailsAdapter);
             } else {
-                fetchMovieReviewsAsyncTask.execute(tmdbId);
+                ConnectivityManager conMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+                if (activeNetwork != null && activeNetwork.isConnected()) {
+                    fetchMovieReviewsAsyncTask.execute(tmdbId);
+                } else {
+                    // notify user you are not online
+                    Toast.makeText(getActivity(), "You are not online!", Toast.LENGTH_LONG).show();
+                }
             }
 
             mRecyclerview.setAdapter(mDetailsAdapter);
