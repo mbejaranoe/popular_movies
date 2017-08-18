@@ -128,55 +128,57 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
         if (intent != null && intent.hasExtra("movie")) {
             String tmdbId = intent.getStringExtra("movie");
 
-            Cursor cursor;
+            Cursor cursorMovie;
             String[] projection = DETAIL_MOVIE_PROJECTION;
             String selection = MovieContract.MovieEntry.COLUMN_TMDB_ID + "=?";
             String[] selectionArgs = new String[]{tmdbId};
             String sortOrder = null;
 
-            cursor = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+            cursorMovie = getContext().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
                     projection,
                     selection,
                     selectionArgs,
                     sortOrder);
 
-            cursor.moveToFirst();
+            cursorMovie.moveToFirst();
 
-            mMovieDetails.put(MovieContract.MovieEntry._ID,cursor.getInt(INDEX_ID));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TITLE,cursor.getString(INDEX_TITLE));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TMDB_ID,cursor.getString(INDEX_TMDB_ID));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER,cursor.getBlob(INDEX_MOVIE_POSTER));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_BACKDROP_IMAGE, cursor.getBlob(INDEX_BACKDROP_IMAGE));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS,cursor.getString(INDEX_SYNOPSIS));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,cursor.getString(INDEX_RELEASE_DATE));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_POPULARITY,cursor.getLong(INDEX_POPULARITY));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,cursor.getLong(INDEX_VOTE_AVERAGE));
-            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_FAVORITE,cursor.getInt(INDEX_FAVORITE));
+            mMovieDetails.put(MovieContract.MovieEntry._ID,cursorMovie.getInt(INDEX_ID));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TITLE,cursorMovie.getString(INDEX_TITLE));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_TMDB_ID,cursorMovie.getString(INDEX_TMDB_ID));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER,cursorMovie.getBlob(INDEX_MOVIE_POSTER));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_BACKDROP_IMAGE, cursorMovie.getBlob(INDEX_BACKDROP_IMAGE));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_SYNOPSIS,cursorMovie.getString(INDEX_SYNOPSIS));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE,cursorMovie.getString(INDEX_RELEASE_DATE));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_POPULARITY,cursorMovie.getLong(INDEX_POPULARITY));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE,cursorMovie.getLong(INDEX_VOTE_AVERAGE));
+            mMovieDetails.put(MovieContract.MovieEntry.COLUMN_FAVORITE,cursorMovie.getInt(INDEX_FAVORITE));
             mDetailsAdapter.setMovieDetails(mMovieDetails);
 
-            mMarkedFavorite = cursor.getInt(INDEX_FAVORITE);
+            mMarkedFavorite = cursorMovie.getInt(INDEX_FAVORITE);
+            cursorMovie.close();
 
             projection = TRAILERS_PROJECTION;
             selection = MovieContract.TrailersEntry.COLUMN_TMDB_ID + "=?";
+            Cursor cursorTrailers;
 
-            cursor = getContext().getContentResolver().query(MovieContract.TrailersEntry.CONTENT_URI,
+            cursorTrailers = getContext().getContentResolver().query(MovieContract.TrailersEntry.CONTENT_URI,
                     projection,
                     selection,
                     selectionArgs,
                     sortOrder);
 
-            if (cursor != null && cursor.getCount() > 0) {
-                mTrailers = new ContentValues[cursor.getCount()];
-                cursor.moveToFirst();
+            if (cursorTrailers != null && cursorTrailers.getCount() > 0) {
+                mTrailers = new ContentValues[cursorTrailers.getCount()];
+                cursorTrailers.moveToFirst();
                 int i = 0;
-                while (cursor.isAfterLast() == false) {
+                while (cursorTrailers.isAfterLast() == false) {
                     mTrailers[i] = new ContentValues();
-                    mTrailers[i].put(MovieContract.TrailersEntry._ID, cursor.getInt(TRAILERS_INDEX_ID));
-                    mTrailers[i].put(MovieContract.TrailersEntry.COLUMN_TMDB_ID, cursor.getString(TRAILERS_INDEX_TMDB_ID));
-                    mTrailers[i].put(MovieContract.TrailersEntry.COLUMN_URL, cursor.getString(TRAILERS_INDEX_URL));
-                    mTrailers[i].put(MovieContract.TrailersEntry.COLUMN_NAME, cursor.getString(TRAILERS_INDEX_NAME));
+                    mTrailers[i].put(MovieContract.TrailersEntry._ID, cursorTrailers.getInt(TRAILERS_INDEX_ID));
+                    mTrailers[i].put(MovieContract.TrailersEntry.COLUMN_TMDB_ID, cursorTrailers.getString(TRAILERS_INDEX_TMDB_ID));
+                    mTrailers[i].put(MovieContract.TrailersEntry.COLUMN_URL, cursorTrailers.getString(TRAILERS_INDEX_URL));
+                    mTrailers[i].put(MovieContract.TrailersEntry.COLUMN_NAME, cursorTrailers.getString(TRAILERS_INDEX_NAME));
                     i++;
-                    cursor.moveToNext();
+                    cursorTrailers.moveToNext();
                 }
                 mDetailsAdapter.setTrailers(mTrailers);
                 mRecyclerview.setAdapter(mDetailsAdapter);
@@ -187,32 +189,34 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
                 if (activeNetwork != null && activeNetwork.isConnected()) {
                     fetchMovieTrailersAsyncTask.execute(tmdbId);
                 } else {
-                    // notify user you are not online
-                    Toast.makeText(getActivity(), "You are not online!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.offline_status_trailers_message), Toast.LENGTH_LONG).show();
                 }
             }
 
+            cursorTrailers.close();
+
             projection = REVIEWS_PROJECTION;
             selection = MovieContract.ReviewsEntry.COLUMN_TMDB_ID + "=?";
+            Cursor cursorReviews;
 
-            cursor = getContext().getContentResolver().query(MovieContract.ReviewsEntry.CONTENT_URI,
+            cursorReviews = getContext().getContentResolver().query(MovieContract.ReviewsEntry.CONTENT_URI,
                     projection,
                     selection,
                     selectionArgs,
                     sortOrder);
 
-            if (cursor != null && cursor.getCount() > 0) {
-                mReviews = new ContentValues[cursor.getCount()];
-                cursor.moveToFirst();
+            if (cursorReviews != null && cursorReviews.getCount() > 0) {
+                mReviews = new ContentValues[cursorReviews.getCount()];
+                cursorReviews.moveToFirst();
                 int i = 0;
-                while (cursor.isAfterLast() == false) {
+                while (cursorReviews.isAfterLast() == false) {
                     mReviews[i] = new ContentValues();
-                    mReviews[i].put(MovieContract.ReviewsEntry._ID, cursor.getInt(REVIEWS_INDEX_ID));
-                    mReviews[i].put(MovieContract.ReviewsEntry.COLUMN_TMDB_ID, cursor.getString(REVIEWS_INDEX_ID));
-                    mReviews[i].put(MovieContract.ReviewsEntry.COLUMN_AUTHOR, cursor.getString(REVIEWS_INDEX_AUTHOR));
-                    mReviews[i].put(MovieContract.ReviewsEntry.COLUMN_REVIEW, cursor.getString(REVIEWS_INDEX_REVIEW));
+                    mReviews[i].put(MovieContract.ReviewsEntry._ID, cursorReviews.getInt(REVIEWS_INDEX_ID));
+                    mReviews[i].put(MovieContract.ReviewsEntry.COLUMN_TMDB_ID, cursorReviews.getString(REVIEWS_INDEX_TMDB_ID));
+                    mReviews[i].put(MovieContract.ReviewsEntry.COLUMN_AUTHOR, cursorReviews.getString(REVIEWS_INDEX_AUTHOR));
+                    mReviews[i].put(MovieContract.ReviewsEntry.COLUMN_REVIEW, cursorReviews.getString(REVIEWS_INDEX_REVIEW));
                     i++;
-                    cursor.moveToNext();
+                    cursorReviews.moveToNext();
                 }
                 mDetailsAdapter.setReviews(mReviews);
                 mRecyclerview.setAdapter(mDetailsAdapter);
@@ -222,12 +226,12 @@ public class DetailFragment extends Fragment implements OnFetchMovieTrailerTaskC
                 if (activeNetwork != null && activeNetwork.isConnected()) {
                     fetchMovieReviewsAsyncTask.execute(tmdbId);
                 } else {
-                    // notify user you are not online
-                    Toast.makeText(getActivity(), "You are not online!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), getString(R.string.offline_status_reviews_message), Toast.LENGTH_LONG).show();
                 }
             }
 
             mRecyclerview.setAdapter(mDetailsAdapter);
+            cursorReviews.close();
 
         }
         return rootView;

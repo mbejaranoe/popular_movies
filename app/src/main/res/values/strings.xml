@@ -25,4 +25,8 @@
     <string name="user_textView">Manolo Bejarano</string>
     <string name="review_textView">Esta película es una bonita idea ...(más)</string>
 
+    <string name="offline_status_movie_info_message">Unable to fetch movies information, you are not connected to the internet!</string>
+    <string name="offline_status_trailers_message">Unable to fetch movie trailers, you are not connected to the internet!</string>
+    <string name="offline_status_reviews_message">Unable to fetch movie reviews, you are not connected to the internet!</string>
+
 </resources>

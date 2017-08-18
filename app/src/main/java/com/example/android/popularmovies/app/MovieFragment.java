@@ -75,7 +75,9 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
 
         @Override
         protected void onPostExecute(ContentValues[] cv) {
-            getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI,cv);
+            if (getContext().getContentResolver() != null) {
+                getContext().getContentResolver().bulkInsert(MovieContract.MovieEntry.CONTENT_URI, cv);
+            }
         }
     }
 
@@ -85,13 +87,14 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onCreate(savedInstanceState);
         mSortOrder = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.pref_order_key),getString(R.string.pref_order_default));
         if (!mSortOrder.equals(getString(R.string.pref_order_favorite))) {
-            final ConnectivityManager conMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+            ConnectivityManager conMgr = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnected()) {
-                new fetchMovieDataAsyncTask().execute();
+                if (getContext().getContentResolver() != null) {
+                    new fetchMovieDataAsyncTask().execute();
+                }
             } else {
-                // notify user you are not online
-                Toast.makeText(getActivity(), "You are not online!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.offline_status_movie_info_message), Toast.LENGTH_LONG).show();
             }
         }
         updateMovies();
